@@ -1,7 +1,7 @@
 {% extends "common/page_base.html" %}  {# common/page_base.html extends layout.html #}
 
 {% block content %}
-<h1>User Profile</h1>
+<h1>{{ current_user.first_name +' '+ current_user.last_name or current_user.user_auth.username }}'s Profile</h1>
 
 <p><a href="{{ url_for('user.change_password') }}">Change password</a></p>
 
@@ -11,9 +11,9 @@
     <div class="col-sm-6 col-md-5 col-lg-4">
     {{ form.hidden_tag() }}
 
-    {{ render_field(form.first_name, tabindex=240) }}
+    {{ render_field(form.first_name, tabindex=240, value=current_user.first_name)}}
 
-    {{ render_field(form.last_name, tabindex=250) }}
+    {{ render_field(form.last_name, tabindex=250, value=current_user.last_name) }}
 
     {{ render_submit_field(form.submit, tabindex=280) }}
     </div>
