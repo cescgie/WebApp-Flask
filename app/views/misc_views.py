@@ -55,3 +55,35 @@ def user_profile_page():
                            form=form)
 
 
+@main_blueprint.route('/conference/reviewer')
+@roles_accepted('admin')  # Limits access to users with the 'admin' role
+def assignment_of_reviewers():
+    return render_template('conference/assignment_of_reviewers.html')
+
+@main_blueprint.route('/conference/paper')
+@roles_accepted('admin')  # Limits access to users with the 'admin' role
+def assignment_papers_to_reviewers():
+    return render_template('conference/assignment_papers_to_reviewers.html')
+
+@main_blueprint.route('/conference/overview')
+@roles_accepted('admin')  # Limits access to users with the 'admin' role
+def overview_scores():
+    return render_template('conference/overview_scores.html')
+
+# TODO
+# CREATE NEW ROLE: reviewer
+# ACCEPT: admin, reviewer
+@main_blueprint.route('/reviewer/paper')
+@roles_accepted('admin', 'reviewer')  # Limits access to admin and reviewer
+def review_submission():
+    return render_template('member/review_submission.html')
+
+@main_blueprint.route('/member/submit-paper')
+@login_required # Limits access to authenticated users
+def paper_submission():
+    return render_template('member/paper_submission.html')
+
+@main_blueprint.route('/member/list-papers')
+@login_required # Limits access to authenticated users
+def list_of_papers():
+    return render_template('member/list_of_papers.html')

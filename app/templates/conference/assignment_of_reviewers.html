@@ -1,0 +1,8 @@
+{% extends "common/page_base.html" %}
+
+{% block content %}
+    <p><a href="{{ url_for('main.home_page') }}">Home</a> / <a href={{ url_for('main.admin_page') }}>{%trans%}Conference Chair{%endtrans%}</a></p>
+    <h1>Assignment Of Reviewers</h1>
+    <p>2) There should be a page for the Conference Chair to assign some of the registered users to
+        be reviewers of the conference.</p>
+{% endblock %}

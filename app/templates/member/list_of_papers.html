@@ -1,0 +1,10 @@
+{% extends "common/page_base.html" %}
+
+{% block content %}
+    <p><a href="{{ url_for('main.home_page') }}">Home</a></p>
+    <h1>List Of Papers</h1>
+    <p>8) After successful login, some messages should be displayed to the user, including a list of
+        the papers for the user to review, status (“under review”/“accepted”/“rejected”) of the
+        user’s co-authored papers. An author is not allowed to see the IDs of the reviewers of their
+        papers.</p>
+{% endblock %}
