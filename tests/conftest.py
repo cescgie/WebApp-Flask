@@ -13,7 +13,7 @@ from app import create_app, db as the_db
 the_app = create_app(dict(
     TESTING=True,  # Propagate exceptions
     LOGIN_DISABLED=False,  # Enable @register_required
-    MAIL_SUPPRESS_SEND=True,  # Disable Flask-Mail send
+    MAIL_SUPPRESS_SEND=False,  # Disable Flask-Mail send
     SERVER_NAME='localhost',  # Enable url_for() without request context
     SQLALCHEMY_DATABASE_URI='sqlite:///:memory:',  # In-memory SQLite DB
     WTF_CSRF_ENABLED=False,  # Disable CSRF form validation
