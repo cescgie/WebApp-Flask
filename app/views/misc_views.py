@@ -8,7 +8,7 @@ from flask import request, url_for
 from flask_user import current_user, login_required, roles_accepted
 
 from app import db
-from app.models.user_models import UserProfileForm
+from app.models.user_models import UserProfileForm, User, Role
 
 # When using a Flask app factory we must use a blueprint to avoid needing 'app' for '@app.route'
 main_blueprint = Blueprint('main', __name__, template_folder='templates')
@@ -70,8 +70,6 @@ def assignment_papers_to_reviewers():
 def overview_scores():
     return render_template('conference/overview_scores.html')
 
-# TODO
-# CREATE NEW ROLE: reviewer
 # ACCEPT: admin, reviewer
 @main_blueprint.route('/reviewer/paper')
 @roles_accepted('admin', 'reviewer')  # Limits access to admin and reviewer

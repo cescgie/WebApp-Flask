@@ -16,6 +16,7 @@
     {% else %}
         <p><a href={{ url_for('user.login') }}>{%trans%}Sign in{%endtrans%}</a></p>    
         <p>Admin: (roles_required: admin@example.com / Password1)</p>
+        <p>Reviewer: (login_required: reviewer@example.com / Password1)</p>        
         <p>Member: (login_required: member@example.com / Password1)</p>
     {% endif %}
 {% endblock %}
