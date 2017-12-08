@@ -71,7 +71,14 @@
         <!-- Bootstrap JS -->
         <script src="{{ url_for('static', filename='bootstrap/js/jquery.min.js') }}"></script>
         <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
-
+        
+        <!-- http://flask.pocoo.org/docs/0.12/patterns/jquery/ -->
+        <script type=text/javascript>
+            $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+          </script>
+        
+          {% block script %}{% endblock %}
+        
         <!-- Optional Google Analytics: change UA-XXXXX-X to be your site's ID.
         <script>
             (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=

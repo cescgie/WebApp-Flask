@@ -6,6 +6,7 @@
 from flask import Blueprint, redirect, render_template
 from flask import request, url_for
 from flask_user import current_user, login_required, roles_accepted
+from flask import Flask, jsonify
 
 from app import db
 from app.models.user_models import UserProfileForm, User, Role
@@ -58,7 +59,9 @@ def user_profile_page():
 @main_blueprint.route('/conference/reviewer')
 @roles_accepted('admin')  # Limits access to users with the 'admin' role
 def assignment_of_reviewers():
-    return render_template('conference/assignment_of_reviewers.html')
+    users = User.query.order_by(User.last_name).all()
+    return render_template('conference/assignment_of_reviewers.html', 
+                        users=users)
 
 @main_blueprint.route('/conference/paper')
 @roles_accepted('admin')  # Limits access to users with the 'admin' role
@@ -85,3 +88,17 @@ def paper_submission():
 @login_required # Limits access to authenticated users
 def list_of_papers():
     return render_template('member/list_of_papers.html')
+
+## User activation
+@main_blueprint.route('/activate/user')
+@roles_accepted('admin')
+def activate_user_admin():
+    id = request.args.get('id')
+    active = request.args.get('active')
+
+    activation = True if active == 'true' else False
+
+    user = User.query.filter_by(id=id).update(dict(active=activation))
+    db.session.commit()
+
+    return jsonify({'activation':activation,'active':active})

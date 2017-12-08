@@ -6,7 +6,7 @@
         {% if current_user.roles %}
             {% for item in current_user.roles %}
                 {% if item.name == 'admin' %}
-                    <p><a href={{ url_for('main.admin_page') }}>{%trans%}Admin Page{%endtrans%}</a></p>                
+                    <p><a href={{ url_for('main.admin_page') }}>{%trans%}Conference Chair{%endtrans%}</a></p>                
                 {% endif %}                    
             {% endfor %}
             <p><a href={{ url_for('main.review_submission') }}>{%trans%}Review Submission{%endtrans%}</a></p>            
