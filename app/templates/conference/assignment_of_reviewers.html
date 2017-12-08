@@ -67,13 +67,14 @@
           </tbody>
         </table>
     </div>
-        
+    
 {% endblock %}
 
 {% block script %}
     <script type=text/javascript>        
     $(function() {
         $('.activate').bind('change', function(e) {
+            waitingDialog.show('Loading...', {dialogSize: 'sm', progressType: 'info'});
             e.preventDefault();                        
             var id = $(e.currentTarget).data('cust-id');
             var lastValue = $(e.currentTarget).data('cust-value');
@@ -85,7 +86,8 @@
             $.getJSON($SCRIPT_ROOT + '/activate/user', {
                 "id":id,"active": action
               }, function(data) {
-                  $(e.currentTarget).data('cust-value',!lastValue);          
+                    $(e.currentTarget).data('cust-value',!lastValue); 
+                    waitingDialog.hide();
               });
               return false;
         });

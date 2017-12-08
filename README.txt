@@ -1,4 +1,4 @@
-# Installation
+# Starter
 - If there is no virtualenv yet , create one
     `virtualenv env`
 - Activate virtualenv
@@ -10,6 +10,11 @@
 - Run with debug
     `python manage.py runserver`
 
+# Development
+- Activate virtualenv
+    `source env/bin/activate`
+- Run with debug
+    `python manage.py runserver`
 
 # TODO
 - New ROLE: 'reviewer'
