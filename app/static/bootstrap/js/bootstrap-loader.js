@@ -1,3 +1,6 @@
+/**
+ * Source: https://bootsnipp.com/snippets/featured/quotwaiting-forquot-modal-dialog
+ */
 var waitingDialog = waitingDialog || (function ($) {
     'use strict';
 

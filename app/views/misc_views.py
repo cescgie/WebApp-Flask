@@ -9,7 +9,7 @@ from flask_user import current_user, login_required, roles_accepted
 from flask import Flask, jsonify
 
 from app import db
-from app.models.user_models import UserProfileForm, User, Role
+from app.models.user_models import UserProfileForm, User, Role, UsersRoles
 
 # When using a Flask app factory we must use a blueprint to avoid needing 'app' for '@app.route'
 main_blueprint = Blueprint('main', __name__, template_folder='templates')
@@ -102,3 +102,39 @@ def activate_user_admin():
     db.session.commit()
 
     return jsonify({'activation':activation,'active':active})
+
+## User assignation as reviewer
+@main_blueprint.route('/assign/user')
+@roles_accepted('admin')
+def assign_user_admin():
+    id = request.args.get('id')
+    user_role = UsersRoles.query.filter(UsersRoles.user_id == id).first()
+    # Check if user role exist and prevent update admin role (role_id = 1)
+    if user_role and user_role.role_id != 1:
+            # Delete user role in UsersRoles
+            db.session.delete(user_role)
+            db.session.commit()
+            action = 0
+    else:
+        # Update user role
+        reviewer_role = find_or_create_role('reviewer', u'Reviewer')
+        user = find_or_update_user(id, reviewer_role)
+        action = 1
+
+    return jsonify({'id':id,'action':action})
+
+def find_or_create_role(name, label):
+    """ Find existing role or create new role """
+    role = Role.query.filter(Role.name == name).first()
+    if not role:
+        role = Role(name=name, label=label)
+        db.session.add(role)
+    return role
+
+def find_or_update_user(id, role=None):
+    """ Find existing user and update role """
+    user = User.query.filter(User.id == id).first()
+    if user and role:
+        user.roles.append(role)
+        db.session.commit()
+    return user

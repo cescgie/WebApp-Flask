@@ -40,13 +40,13 @@
                                 <td>
                                     <input type="checkbox" data-cust-id="{{ user.id }}" data-cust-value="{{ user.active }}" class="activate" name="active" {% if user.active %} checked {% endif %}>                                        
                                 </td>
-                                <td>Reviewer</td>
+                                <td><span id="role-{{ user.id }}">Reviewer</span></td>
                                 <td>
-                                    <input type="checkbox" data-cust-id="{{ user.id }}" class="set_reviewer" name="reviewer" checked>                                                                                
+                                    <input type="checkbox" data-cust-id="{{ user.id }}" data-cust-value="{{ role.id }}" class="set_reviewer" name="reviewer" {% if role.id == 2 %} checked {% endif %}>                                                                                
                                 </td>                            
-                            </tr>                          
+                            </tr>                            
                         {% endif %}                        
-                    {% endfor %}                                                                   
+                    {% endfor %}
                 {% else %}
                     <tr>
                         <td>{{ user.first_name }}</td>
@@ -56,7 +56,7 @@
                             <input type="checkbox" class="activate" data-cust-id="{{ user.id }}" data-cust-value="{{ user.active }}" name="active" {% if user.active %} checked {% endif %}>                                        
                             </td>
                         <td>
-                            <span>Member</span>
+                            <span id="role-{{ user.id }}">Member</span>
                         </td>
                         <td>
                             <input type="checkbox" class="set_reviewer" data-cust-id="{{ user.id }}" name="role">                    
@@ -93,9 +93,24 @@
         });
 
         $('.set_reviewer').bind('change', function(e) {
+            waitingDialog.show('Loading...', {dialogSize: 'sm', progressType: 'info'});            
             e.preventDefault();                        
             var id = $(e.currentTarget).data('cust-id');
-            console.log('set reviewer',id);
+            var user_name = $(e.currentTarget).data('cust-value');
+            
+            $.getJSON($SCRIPT_ROOT + '/assign/user', {
+                "id":id,"user_name":user_name
+              }, function(data) {
+                    var role = '';
+                    if(data.action==1){
+                        role = 'Reviewer';
+                    }else{
+                        role = 'Member';
+                    }
+                    $('#role-'+id).text(role);                    
+                    waitingDialog.hide();
+              });
+              return false;
         });
       });
     </script>
