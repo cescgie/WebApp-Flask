@@ -6,17 +6,18 @@
 from flask import Blueprint, redirect, render_template
 from flask import request, url_for
 from flask_user import current_user, login_required, roles_accepted
-from flask import Flask, jsonify
+from flask import jsonify
 
 from app import db
-from app.models.user_models import UserProfileForm, User, Role, UsersRoles, Paper
+from app.models.paper_models import Paper
+from app.models.user_models import UserProfileForm, User, Role, UsersRoles
 
-# from phpserialize import serialize, unserialize
 from phpserialize import *
 from io import StringIO
 
 # When using a Flask app factory we must use a blueprint to avoid needing 'app' for '@app.route'
 main_blueprint = Blueprint('main', __name__, template_folder='templates')
+
 
 # The Home page is accessible to anyone
 @main_blueprint.route('/')
@@ -67,15 +68,18 @@ def assignment_of_reviewers():
     return render_template('conference/assignment_of_reviewers.html', 
                         users=users)
 
+
 @main_blueprint.route('/conference/paper')
 @roles_accepted('admin')  # Limits access to users with the 'admin' role
 def assignment_papers_to_reviewers():
     return render_template('conference/assignment_papers_to_reviewers.html')
 
+
 @main_blueprint.route('/conference/overview')
 @roles_accepted('admin')  # Limits access to users with the 'admin' role
 def overview_scores():
     return render_template('conference/overview_scores.html')
+
 
 # ACCEPT: admin, reviewer
 @main_blueprint.route('/reviewer/paper')
@@ -83,10 +87,12 @@ def overview_scores():
 def review_submission():
     return render_template('member/review_submission.html')
 
+
 @main_blueprint.route('/member/submit-paper')
 @login_required # Limits access to authenticated users
 def paper_submission():
     return render_template('member/paper_submission.html')
+
 
 @main_blueprint.route('/member/list-papers')
 @login_required # Limits access to authenticated users
@@ -113,7 +119,8 @@ def list_of_papers():
                         paper_status=paper_status,
                         paper_authors=paper_authors)
 
-## User activation
+
+# User activation
 @main_blueprint.route('/activate/user')
 @roles_accepted('admin')
 def activate_user_admin():
@@ -127,7 +134,8 @@ def activate_user_admin():
 
     return jsonify({'activation':activation,'active':active})
 
-## User assignation as reviewer
+
+# User assignation as reviewer
 @main_blueprint.route('/assign/user')
 @roles_accepted('admin')
 def assign_user_admin():
@@ -147,6 +155,7 @@ def assign_user_admin():
 
     return jsonify({'id':id,'action':action})
 
+
 def find_or_create_role(name, label):
     """ Find existing role or create new role """
     role = Role.query.filter(Role.name == name).first()
@@ -154,6 +163,7 @@ def find_or_create_role(name, label):
         role = Role(name=name, label=label)
         db.session.add(role)
     return role
+
 
 def find_or_update_user(id, role=None):
     """ Find existing user and update role """

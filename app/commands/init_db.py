@@ -10,7 +10,9 @@ from flask import current_app, json
 from flask_script import Command
 
 from app import db
-from app.models.user_models import User, Role, Paper
+from app.models.paper_models import Paper
+from app.models.user_models import User, Role
+
 
 from phpserialize import serialize
 
