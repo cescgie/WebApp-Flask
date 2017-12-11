@@ -110,6 +110,7 @@ ENV/
 
 # IDEs
 .idea/
+.vscode/
 
 
 # Application-specific .gitignores

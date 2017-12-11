@@ -13,7 +13,7 @@ from app.models.user_models import UserProfileForm, User, Role, UsersRoles, Pape
 
 # from phpserialize import serialize, unserialize
 from phpserialize import *
-from StringIO import StringIO
+from io import StringIO
 
 # When using a Flask app factory we must use a blueprint to avoid needing 'app' for '@app.route'
 main_blueprint = Blueprint('main', __name__, template_folder='templates')
