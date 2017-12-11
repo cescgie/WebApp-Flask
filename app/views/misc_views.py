@@ -93,6 +93,11 @@ def review_submission():
 @login_required # Limits access to authenticated users
 def paper_submission():
     form = PaperSubmissionForm(request.form)
+    if request.method == 'POST' and form.validate():
+        paper = Paper(form.authors, form.title, form.abstract)  # some attributes are missing for now
+        db.session.commit()
+        form = PaperSubmissionForm(request.form)
+        return render_template('member/paper_submission.html', form=form)
     return render_template('member/paper_submission.html', form=form)
 
 
@@ -134,7 +139,7 @@ def activate_user_admin():
     user = User.query.filter_by(id=id).update(dict(active=activation))
     db.session.commit()
 
-    return jsonify({'activation':activation,'active':active})
+    return jsonify({'activation': activation, 'active': active})
 
 
 # User assignation as reviewer
