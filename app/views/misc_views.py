@@ -9,7 +9,11 @@ from flask_user import current_user, login_required, roles_accepted
 from flask import Flask, jsonify
 
 from app import db
-from app.models.user_models import UserProfileForm, User, Role, UsersRoles
+from app.models.user_models import UserProfileForm, User, Role, UsersRoles, Paper
+
+# from phpserialize import serialize, unserialize
+from phpserialize import *
+from StringIO import StringIO
 
 # When using a Flask app factory we must use a blueprint to avoid needing 'app' for '@app.route'
 main_blueprint = Blueprint('main', __name__, template_folder='templates')
@@ -87,7 +91,27 @@ def paper_submission():
 @main_blueprint.route('/member/list-papers')
 @login_required # Limits access to authenticated users
 def list_of_papers():
-    return render_template('member/list_of_papers.html')
+    papers = Paper.query.order_by(Paper.id).all()
+    paper_authors = []
+    for paper in papers:
+        stream = StringIO(paper.authors)
+        lists = dict_to_list(load(stream))
+        author_names = []
+        for author_id in lists:
+            # Find user where id = author_id
+            user = User.query.filter(User.id == author_id).first()
+            # Convert unicode firstname to str
+            # Push to author_names
+            author_names.append(str(user.first_name))
+        # Convert array to string separated with comma
+        # Push to paper_authors
+        paper_authors.append(', '.join(author_names))
+    # List of status after index
+    paper_status = ['Submitted', 'Under Review', 'Accepted', 'Rejected']
+    return render_template('member/list_of_papers.html', 
+                        papers=papers, 
+                        paper_status=paper_status,
+                        paper_authors=paper_authors)
 
 ## User activation
 @main_blueprint.route('/activate/user')

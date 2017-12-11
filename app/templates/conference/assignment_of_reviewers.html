@@ -1,118 +1,119 @@
-{% extends "common/page_base.html" %}
+{% extends "common/page_base.html" %} {% block content %}
+<p><a href="{{ url_for('main.home_page') }}">Home</a> / <a href={{ url_for( 'main.admin_page') }}>{%trans%}Conference Chair{%endtrans%}</a></p>
+<h1>Assignment Of Reviewers</h1>
+<p>2) There should be a page for the Conference Chair to assign some of the registered users to be reviewers of the conference.</p>
+<p></p>
 
-{% block content %}
-    <p><a href="{{ url_for('main.home_page') }}">Home</a> / <a href={{ url_for('main.admin_page') }}>{%trans%}Conference Chair{%endtrans%}</a></p>
-    <h1>Assignment Of Reviewers</h1>
-    <p>2) There should be a page for the Conference Chair to assign some of the registered users to
-        be reviewers of the conference.</p>
-    <p></p>
-
-    <div class="table-responsive">          
-        <table class="table">
-          <thead>
+<div class="table-responsive">
+    <table class="table">
+        <thead>
             <tr>
-              <th>Firstname</th>
-              <th>Lastname</th>
-              <th>Email</th>              
-              <th>Active</th>
-              <th>Role</th>
-              <th>Set as reviewer</th>              
+                <th>#</th>
+                <th>Firstname</th>
+                <th>Lastname</th>
+                <th>Email</th>
+                <th>Active</th>
+                <th>Role</th>
+                <th>Set as reviewer</th>
             </tr>
-          </thead>
-          <tbody>
-            {% for user in users %}
-                {% if user.roles %}
-                    {% for role in user.roles %}
-                        {% if role.id == 1 %}
-                            <tr>
-                                <td>{{ user.first_name }}</td>
-                                <td>{{ user.last_name }}</td>
-                                <td>{{ user.email }}</td>              
-                                <td></td>
-                                <td>Admin</td>
-                                <td></td>                            
-                            </tr>
-                        {% else %}  
-                            <tr>
-                                <td>{{ user.first_name }}</td>
-                                <td>{{ user.last_name }}</td>
-                                <td>{{ user.email }}</td>              
-                                <td>
-                                    <input type="checkbox" data-cust-id="{{ user.id }}" data-cust-value="{{ user.active }}" class="activate" name="active" {% if user.active %} checked {% endif %}>                                        
-                                </td>
-                                <td><span id="role-{{ user.id }}">Reviewer</span></td>
-                                <td>
-                                    <input type="checkbox" data-cust-id="{{ user.id }}" data-cust-value="{{ role.id }}" class="set_reviewer" name="reviewer" {% if role.id == 2 %} checked {% endif %}>                                                                                
-                                </td>                            
-                            </tr>                            
-                        {% endif %}                        
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <td>{{ user.first_name }}</td>
-                        <td>{{ user.last_name }}</td>
-                        <td>{{ user.email }}</td>              
-                        <td>
-                            <input type="checkbox" class="activate" data-cust-id="{{ user.id }}" data-cust-value="{{ user.active }}" name="active" {% if user.active %} checked {% endif %}>                                        
-                            </td>
-                        <td>
-                            <span id="role-{{ user.id }}">Member</span>
-                        </td>
-                        <td>
-                            <input type="checkbox" class="set_reviewer" data-cust-id="{{ user.id }}" name="role">                    
-                        </td>
-                    </tr>
-                {% endif %}                   
-            {% endfor %}            
-          </tbody>
-        </table>
-    </div>
-    
-{% endblock %}
+        </thead>
+        <tbody>
+            {% for user in users %} {% if user.roles %} {% for role in user.roles %} {% if role.id == 1 %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.first_name }}</td>
+                <td>{{ user.last_name }}</td>
+                <td>{{ user.email }}</td>
+                <td></td>
+                <td>Admin</td>
+                <td></td>
+            </tr>
+            {% else %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.first_name }}</td>
+                <td>{{ user.last_name }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    <input type="checkbox" data-cust-id="{{ user.id }}" data-cust-value="{{ user.active }}" class="activate" name="active" {% if user.active %} checked {% endif %}>
+                </td>
+                <td><span id="role-{{ user.id }}">Reviewer</span></td>
+                <td>
+                    <input type="checkbox" data-cust-id="{{ user.id }}" data-cust-value="{{ role.id }}" class="set_reviewer" name="reviewer" {% if role.id==2 %} checked {% endif %}>
+                </td>
+            </tr>
+            {% endif %} {% endfor %} {% else %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.first_name }}</td>
+                <td>{{ user.last_name }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    <input type="checkbox" class="activate" data-cust-id="{{ user.id }}" data-cust-value="{{ user.active }}" name="active" {% if user.active %} checked {% endif %}>
+                </td>
+                <td>
+                    <span id="role-{{ user.id }}">Member</span>
+                </td>
+                <td>
+                    <input type="checkbox" class="set_reviewer" data-cust-id="{{ user.id }}" name="role">
+                </td>
+            </tr>
+            {% endif %} {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-{% block script %}
-    <script type=text/javascript>        
+{% endblock %} {% block script %}
+<script type=text/javascript>
     $(function() {
         $('.activate').bind('change', function(e) {
-            waitingDialog.show('Loading...', {dialogSize: 'sm', progressType: 'info'});
-            e.preventDefault();                        
+            waitingDialog.show('Loading...', {
+                dialogSize: 'sm',
+                progressType: 'info'
+            });
+            e.preventDefault();
             var id = $(e.currentTarget).data('cust-id');
             var lastValue = $(e.currentTarget).data('cust-value');
             var action = false;
-            if(lastValue!='True'){
-                action = true;                
+            if (lastValue != 'True') {
+                action = true;
             }
-            
+
             $.getJSON($SCRIPT_ROOT + '/activate/user', {
-                "id":id,"active": action
-              }, function(data) {
-                    $(e.currentTarget).data('cust-value',!lastValue); 
-                    waitingDialog.hide();
-              });
-              return false;
+                "id": id,
+                "active": action
+            }, function(data) {
+                $(e.currentTarget).data('cust-value', !lastValue);
+                waitingDialog.hide();
+            });
+            return false;
         });
 
         $('.set_reviewer').bind('change', function(e) {
-            waitingDialog.show('Loading...', {dialogSize: 'sm', progressType: 'info'});            
-            e.preventDefault();                        
+            waitingDialog.show('Loading...', {
+                dialogSize: 'sm',
+                progressType: 'info'
+            });
+            e.preventDefault();
             var id = $(e.currentTarget).data('cust-id');
             var user_name = $(e.currentTarget).data('cust-value');
-            
+
             $.getJSON($SCRIPT_ROOT + '/assign/user', {
-                "id":id,"user_name":user_name
-              }, function(data) {
-                    var role = '';
-                    if(data.action==1){
-                        role = 'Reviewer';
-                    }else{
-                        role = 'Member';
-                    }
-                    $('#role-'+id).text(role);                    
-                    waitingDialog.hide();
-              });
-              return false;
+                "id": id,
+                "user_name": user_name
+            }, function(data) {
+                var role = '';
+                if (data.action == 1) {
+                    role = 'Reviewer';
+                } else {
+                    role = 'Member';
+                }
+                $('#role-' + id).text(role);
+                waitingDialog.hide();
+            });
+            return false;
         });
-      });
-    </script>
+    });
+</script>
 
 {% endblock %}

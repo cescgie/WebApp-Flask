@@ -1,10 +1,34 @@
-{% extends "common/page_base.html" %}
+{% extends "common/page_base.html" %} {% block content %}
+<p><a href="{{ url_for('main.home_page') }}">Home</a></p>
+<h1>List Of Papers</h1>
+<p>8) After successful login, some messages should be displayed to the user, including a list of the papers for the user to review, status (“under review”/“accepted”/“rejected”) of the user’s co-authored papers. An author is not allowed to see the IDs of
+    the reviewers of their papers.
+</p>
 
-{% block content %}
-    <p><a href="{{ url_for('main.home_page') }}">Home</a></p>
-    <h1>List Of Papers</h1>
-    <p>8) After successful login, some messages should be displayed to the user, including a list of
-        the papers for the user to review, status (“under review”/“accepted”/“rejected”) of the
-        user’s co-authored papers. An author is not allowed to see the IDs of the reviewers of their
-        papers.</p>
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Authors</th>
+                <th>Title</th>
+                <th>Abstract</th>
+                <th>Status</th>
+                <th>Action (TODO->Only Reviewer && Not Author)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for paper in papers %}
+            <tr>
+                <td>{{ paper.id }} </td>
+                <td>{{ paper_authors[loop.index0] }}</td>
+                <td>{{ paper.title }}</td>
+                <td>{{ paper.abstract }}</td>
+                <td>{{ paper_status[paper.status] }}</td>
+                <td><button>Review</button></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}
