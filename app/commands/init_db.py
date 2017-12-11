@@ -6,11 +6,13 @@
 
 import datetime
 
-from flask import current_app
+from flask import current_app, json
 from flask_script import Command
 
 from app import db
-from app.models.user_models import User, Role
+from app.models.user_models import User, Role, Paper
+
+from phpserialize import serialize
 
 class InitDbCommand(Command):
     """ Initialize the database."""
@@ -23,7 +25,7 @@ def init_db():
     db.drop_all()
     db.create_all()
     create_users()
-
+    create_papers()
 
 def create_users():
     """ Create users """
@@ -36,9 +38,13 @@ def create_users():
     reviewer_role = find_or_create_role('reviewer', u'Reviewer')
 
     # Add users
-    user = find_or_create_user(u'Admin', u'Example', u'admin@example.com', 'Password1', admin_role)
-    user = find_or_create_user(u'Reviewer', u'Example', u'reviewer@example.com', 'Password1', reviewer_role)
-    user = find_or_create_user(u'Member', u'Example', u'member@example.com', 'Password1')
+    find_or_create_user(u'Admin', u'Example', u'admin@example.com', 'Password1', admin_role)
+    find_or_create_user(u'Reviewer1', u'Example', u'reviewer1@example.com', 'Password1', reviewer_role)
+    find_or_create_user(u'Reviewer2', u'Example', u'reviewer2@example.com', 'Password1', reviewer_role)
+    find_or_create_user(u'Reviewer3', u'Example', u'reviewer3@example.com', 'Password1', reviewer_role)
+    find_or_create_user(u'Member1', u'Example', u'member1@example.com', 'Password1')
+    find_or_create_user(u'Member2', u'Example', u'member2@example.com', 'Password1')
+    find_or_create_user(u'Member3', u'Example', u'member3@example.com', 'Password1')
 
     # Save to DB
     db.session.commit()
@@ -68,5 +74,21 @@ def find_or_create_user(first_name, last_name, email, password, role=None):
         db.session.add(user)
     return user
 
+def create_papers():
+    create_papers_func(serialize([5]),'Title 5', 'Abstract 5',5)
+    create_papers_func(serialize([4,6]),'Title 6', 'Abstract 6',6)
+    create_papers_func(serialize([7]),'Title 7', 'Abstract 7',7)
+
+    db.session.commit()
+
+def create_papers_func(authors,title,abstract,submittedBy,status=0,mediaRef=None,mediaTyp=None):
+    paper = Paper(authors=authors,
+                title=title,
+                abstract=abstract,
+                mediaRef=mediaRef,
+                mediaTyp=mediaTyp,
+                status=status,
+                submittedBy=submittedBy)
+    db.session.add(paper)
 
 
