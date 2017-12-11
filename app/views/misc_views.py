@@ -15,6 +15,7 @@ from app.models.user_models import UserProfileForm, User, Role, UsersRoles
 
 from phpserialize import *
 from io import StringIO
+import io
 
 # When using a Flask app factory we must use a blueprint to avoid needing 'app' for '@app.route'
 main_blueprint = Blueprint('main', __name__, template_folder='templates')
@@ -107,7 +108,7 @@ def list_of_papers():
     papers = Paper.query.order_by(Paper.id).all()
     paper_authors = []
     for paper in papers:
-        stream = StringIO(paper.authors)
+        stream = io.BytesIO(paper.authors)
         lists = dict_to_list(load(stream))
         author_names = []
         for author_id in lists:
@@ -122,9 +123,9 @@ def list_of_papers():
     # List of status after index
     paper_status = ['Submitted', 'Under Review', 'Accepted', 'Rejected']
     return render_template('member/list_of_papers.html', 
-                        papers=papers, 
-                        paper_status=paper_status,
-                        paper_authors=paper_authors)
+            papers=papers, 
+            paper_status=paper_status,
+            paper_authors=paper_authors)
 
 
 # User activation
