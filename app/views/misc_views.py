@@ -9,6 +9,7 @@ from flask_user import current_user, login_required, roles_accepted
 from flask import jsonify
 
 from app import db
+from app.forms.forms import PaperSubmissionForm
 from app.models.paper_models import Paper
 from app.models.user_models import UserProfileForm, User, Role, UsersRoles
 
@@ -91,7 +92,8 @@ def review_submission():
 @main_blueprint.route('/member/submit-paper')
 @login_required # Limits access to authenticated users
 def paper_submission():
-    return render_template('member/paper_submission.html')
+    form = PaperSubmissionForm(request.form)
+    return render_template('member/paper_submission.html', form=form)
 
 
 @main_blueprint.route('/member/list-papers')

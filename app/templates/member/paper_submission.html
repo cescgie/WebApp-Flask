@@ -6,4 +6,14 @@
     <p>3) There should be a paper submission page. Any registered user may submit papers. A paper
         has one or more authors, all authors need to be registered. A paper also has a title and an
         abstract. File upload is not required in this lab. A user may submit any number of papers.</p>
+
+    {% from "./common/form_macros.html" import render_field %}
+    <form action="" method="post" name="paper submission">
+        <dl>
+            {{ render_field(form.authors) }}
+            {{ render_field(form.title) }}
+            {{ render_field(form.abstract) }}
+        </dl>
+        <p><input class="btn btn-primary" type="submit" value="Submit"></p>
+    </form>
 {% endblock %}
