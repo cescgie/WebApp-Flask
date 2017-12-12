@@ -20,6 +20,8 @@
 
         <!-- Application specific CSS-->
         <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap-multiselect.css') }}">
+                
     </head>
     <body>
         {% block body %}
@@ -67,11 +69,12 @@
             <div class="pull-left">{{ user_manager.app_name }} v1.0</div>
             <div class="pull-right">&copy; 2014 MyCorp</div>
         </div>
-
+        
         <!-- Bootstrap JS -->
         <script src="{{ url_for('static', filename='bootstrap/js/jquery.min.js') }}"></script>
         <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
         <script src="{{ url_for('static', filename='bootstrap/js/bootstrap-loader.js') }}"></script>
+        <script src="{{ url_for('static', filename='bootstrap/js/bootstrap-multiselect.js') }}"></script>
         
         <!-- http://flask.pocoo.org/docs/0.12/patterns/jquery/ -->
         <script type=text/javascript>

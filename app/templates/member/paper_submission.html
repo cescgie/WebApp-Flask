@@ -7,13 +7,94 @@
         has one or more authors, all authors need to be registered. A paper also has a title and an
         abstract. File upload is not required in this lab. A user may submit any number of papers.</p>
 
-    {% from "./common/form_macros.html" import render_field %}
-    <form action="" method="post" name="paper submission">
-        <dl>
-            {{ render_field(form.authors) }}
-            {{ render_field(form.title) }}
-            {{ render_field(form.abstract) }}
-        </dl>
-        <p><input class="btn btn-primary" type="submit" value="Submit"></p>
+    <form name="paper submission" method="POST" id="paper-submission">
+        <div class="form-group">
+            <label for="select-author">Authors</label><br>
+            <select multiple="multiple" class='form-control' name="select-author" id="select-author" >
+                {% for user in users %}
+                    {% if user.id != 1 %}
+                        <option value="{{user.id}}">{{user.first_name}} {{user.last_name}}</option>                    
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title" class='form-control'/>
+        </div>
+        
+        <div class="form-group">
+            <label for="abstract">Abstract</label>
+            <textarea type="text" id="abstract" name="abstract" class='form-control' row="3"></textarea>
+        </div>
+        
+        <button type="submit" id="submit" class="btn btn-primary">Submit</button>
     </form>
+
+{% endblock %}
+
+{% block script %}
+<!-- Initialize the plugin: -->
+{# https://github.com/davidstutz/bootstrap-multiselect #}
+<script type="text/javascript">
+    $(function() { 
+        $('#select-author').multiselect({
+            enableFiltering: true,   
+            /* Limit 3 selected option */             
+            /* onChange: function(option, checked) {
+                // Get selected options.
+                var selectedOptions = $('#select-author option:selected');
+ 
+                if (selectedOptions.length >= 3) {
+                    // Disable all other checkboxes.
+                    var nonSelectedOptions = $('#select-author option').filter(function() {
+                        return !$(this).is(':selected');
+                    });
+ 
+                    nonSelectedOptions.each(function() {
+                        var input = $('input[value="' + $(this).val() + '"]');
+                        input.prop('disabled', true);
+                        input.parent('li').addClass('disabled');
+                    });
+                }
+                else {
+                    // Enable all checkboxes.
+                    $('#select-author option').each(function() {
+                        var input = $('input[value="' + $(this).val() + '"]');
+                        input.prop('disabled', false);
+                        input.parent('li').addClass('disabled');
+                    });
+                }
+            }*/
+        })
+         
+        $('#paper-submission').on('submit', function(e) {
+            waitingDialog.show('Loading...', {
+                dialogSize: 'sm',
+                progressType: 'info'
+            });
+            e.preventDefault();
+            var data = $("#paper-submission :input").serializeArray(),dataObj = {};
+
+            var author_arr = [];
+            $(data).each(function(i, field){
+                if(field.name == 'select-author'){
+                    author_arr.push(Number(field.value))
+                }else{
+                    dataObj[field.name] = field.value;                    
+                }
+            });
+            dataObj['authors'] = author_arr;
+
+            $.getJSON($SCRIPT_ROOT + '/submit/paper', {
+                    data:JSON.stringify(dataObj)
+                }, function(data) {
+                    document.location = '/member/list-papers';
+                waitingDialog.hide();
+            });
+            return false;
+        });
+    });
+</script>
 {% endblock %}

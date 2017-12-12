@@ -6,7 +6,7 @@
 from flask import Blueprint, redirect, render_template
 from flask import request, url_for
 from flask_user import current_user, login_required, roles_accepted
-from flask import jsonify
+from flask import jsonify, json
 
 from app import db
 from app.forms.forms import PaperSubmissionForm
@@ -16,6 +16,8 @@ from app.models.user_models import UserProfileForm, User, Role, UsersRoles
 from phpserialize import *
 from io import StringIO
 import io
+
+from phpserialize import serialize
 
 # When using a Flask app factory we must use a blueprint to avoid needing 'app' for '@app.route'
 main_blueprint = Blueprint('main', __name__, template_folder='templates')
@@ -93,14 +95,38 @@ def review_submission():
 @main_blueprint.route('/member/submit-paper')
 @login_required # Limits access to authenticated users
 def paper_submission():
-    form = PaperSubmissionForm(request.form)
-    if request.method == 'POST' and form.validate():
-        paper = Paper(form.authors, form.title, form.abstract)  # some attributes are missing for now
-        db.session.commit()
-        form = PaperSubmissionForm(request.form)
-        return render_template('member/paper_submission.html', form=form)
-    return render_template('member/paper_submission.html', form=form)
+    # form = PaperSubmissionForm(request.form)
+    users = User.query.order_by(User.last_name).all()
+    # if request.method == 'POST':
+        # print(request.query)
+        # return request.query
+        # paper = Paper(form.authors, form.title, form.abstract)  # some attributes are missing for now
+        # db.session.commit()
+        # form = PaperSubmissionForm(request.form)
+        # return render_template('member/paper_submission.html', form=form)
+    return render_template('member/paper_submission.html', users=users)
 
+# Paper submit
+@main_blueprint.route('/submit/paper')
+@login_required # Limits access to authenticated users
+def submit_paper():
+    data = request.args.get('data')
+    parse = json.loads(data)
+    authors = ''
+    title = ''
+    abstract = ''
+    for key, value in parse.items():
+        if(key == 'authors'):
+            authors = value
+        if(key == 'title'):
+            title = value
+        if(key == 'abstract'):
+            abstract = value
+
+    create_paper(serialize(authors), str(title), str(abstract), current_user.id)
+    db.session.commit()
+
+    return jsonify({'data': data})
 
 @main_blueprint.route('/member/list-papers')
 @login_required # Limits access to authenticated users
@@ -126,7 +152,6 @@ def list_of_papers():
             papers=papers, 
             paper_status=paper_status,
             paper_authors=paper_authors)
-
 
 # User activation
 @main_blueprint.route('/activate/user')
@@ -163,6 +188,10 @@ def assign_user_admin():
 
     return jsonify({'id':id,'action':action})
 
+def create_paper(authors, title, abstract, submmitedBy):
+    paper = Paper(authors=authors, title=title, abstract=abstract, submittedBy=submmitedBy, status=0)
+    db.session.add(paper)
+    return paper
 
 def find_or_create_role(name, label):
     """ Find existing role or create new role """
