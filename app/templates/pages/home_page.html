@@ -9,14 +9,14 @@
                     <p><a href={{ url_for('main.admin_page') }}>{%trans%}Conference Chair{%endtrans%}</a></p>                
                 {% endif %}                    
             {% endfor %}
-            <p><a href={{ url_for('main.review_submission') }}>{%trans%}Review Submission{%endtrans%}</a></p>            
+            <p><a href={{ url_for('main.review_paper') }}>{%trans%}Review Paper{%endtrans%}</a></p>            
         {% endif %}
         <p><a href={{ url_for('main.paper_submission') }}>{%trans%}Paper Submission{%endtrans%}</a></p>   
         <p><a href={{ url_for('main.list_of_papers') }}>{%trans%}List of Papers{%endtrans%}</a></p>
     {% else %}
         <p><a href={{ url_for('user.login') }}>{%trans%}Sign in{%endtrans%}</a></p>    
         <p>Admin: (roles_required: admin@example.com / Password1)</p>
-        <p>Reviewer: (login_required: reviewer@example.com / Password1)</p>        
-        <p>Member: (login_required: member@example.com / Password1)</p>
+        <p>Reviewer: (login_required: reviewer1@example.com / Password1)</p>        
+        <p>Member: (login_required: member1@example.com / Password1)</p>
     {% endif %}
 {% endblock %}

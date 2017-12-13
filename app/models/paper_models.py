@@ -18,4 +18,4 @@ class PaperReviewers(db.Model):
     __tablename__ = 'paper_reviewers'
     id = db.Column(db.Integer(), primary_key=True)
     paper_id = db.Column(db.Integer(), nullable=False)
-    reviewers = db.Column(db.String(255), nullable=False, server_default=u'') #user_id in array
+    reviewer_id = db.Column(db.Integer(), nullable=False)

@@ -81,14 +81,15 @@ def admin_list_of_papers():
     paper_reviewer = []
     paper_authors = []
     for paper in papers:
-        paper_reviewers = PaperReviewers.query.filter(PaperReviewers.paper_id == paper.id).first()
+        # get paper reviewer with paper.id
+        paper_reviewers = PaperReviewers.query.filter(PaperReviewers.paper_id == paper.id).all()
         if paper_reviewers:
-            reviewers_bin = io.BytesIO(paper_reviewers.reviewers)
-            reviewers_list = dict_to_list(load(reviewers_bin))
             reviewer_names = []
-            for reviewer_id in reviewers_list:
-                user = User.query.filter(User.id == reviewer_id).first()
+            for paperc in paper_reviewers:
+                # get user with reviewe_id
+                user = User.query.filter(User.id == paperc.reviewer_id).first()
                 reviewer_names.append(str(user.first_name))
+            # push to paper reviewer
             paper_reviewer.append(', '.join(reviewer_names))
 
         stream = io.BytesIO(paper.authors)
@@ -120,10 +121,35 @@ def overview_scores():
 
 
 # ACCEPT: admin, reviewer
-@main_blueprint.route('/reviewer/paper')
+@main_blueprint.route('/review/paper')
 @roles_accepted('admin', 'reviewer')  # Limits access to admin and reviewer
-def review_submission():
-    return render_template('member/review_submission.html')
+def review_paper():
+    paper_reviewers = PaperReviewers.query.filter(PaperReviewers.reviewer_id == current_user.id).all()
+    papers = []
+    paper_authors = []
+    for paper_r in paper_reviewers:
+        paper = Paper.query.filter(Paper.id == paper_r.id).first()
+        papers.append(paper)
+
+        stream = io.BytesIO(paper.authors)
+        lists = dict_to_list(load(stream))
+        author_names = []
+        for author_id in lists:
+            # Find user where id = author_id
+            user = User.query.filter(User.id == author_id).first()
+            # Convert unicode firstname to str
+            # Push to author_names
+            author_names.append(str(user.first_name))
+        # Convert array to string separated with comma
+        # Push to paper_authors
+        paper_authors.append(', '.join(author_names))
+
+    # List of status after index
+    paper_status = ['Submitted', 'Under Review', 'Accepted', 'Rejected']
+    return render_template('member/review_paper.html',
+            papers=papers,
+            paper_authors=paper_authors,
+            paper_status=paper_status)
 
 
 @main_blueprint.route('/member/submit-paper')
@@ -157,7 +183,7 @@ def submit_paper():
         if(key == 'abstract'):
             abstract = value
 
-    create_paper(serialize(authors), str(title), str(abstract), current_user.id)
+    create_paper(serialize(authors), str(title), str(abstract), c)
     db.session.commit()
 
     return jsonify({'data': data})

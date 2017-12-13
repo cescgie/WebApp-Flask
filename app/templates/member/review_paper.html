@@ -1,0 +1,31 @@
+{% extends "common/page_base.html" %}  {# common/page_base.html extends layout.html #}
+
+{% block content %}
+    <p><a href="{{ url_for('main.home_page') }}">Home</a></p>
+    <h2>{%trans%}List of papers to be reviewed{%endtrans%}</h2>
+
+    <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Authors</th>                
+                        <th>Status</th>
+                        <th>Action</th>                        
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for paper in papers %}
+                    <tr>
+                        <td>{{ paper.id }}</a></td>
+                        <td><a href="#">{{ paper.title }}</a></td>                
+                        <td>{{ paper_authors[loop.index0] }}</td>
+                        <td>{{ paper_status[paper.status] }}</td>
+                        <td>Review</td>                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+{% endblock %}

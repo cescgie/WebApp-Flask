@@ -96,13 +96,15 @@ def create_papers_func(authors,title,abstract,submittedBy,status=0,mediaRef=None
 
 
 def assign_reviewers():
-    assign_reviewers_func(1,serialize([2]))
-    assign_reviewers_func(2,serialize([2,3]))
-    assign_reviewers_func(3,serialize([3,4]))
+    assign_reviewers_func(1,2)
+    assign_reviewers_func(2,2)
+    assign_reviewers_func(2,3)
+    assign_reviewers_func(3,3)
+    assign_reviewers_func(3,4)
 
     db.session.commit()
 
-def assign_reviewers_func(paper_id,reviewers):
+def assign_reviewers_func(paper_id,reviewer_id):
     paper_reviewer = PaperReviewers(paper_id=paper_id,
-                reviewers=reviewers)
+                reviewer_id=reviewer_id)
     db.session.add(paper_reviewer)

@@ -1,9 +1,0 @@
-{% extends "common/page_base.html" %}  {# common/page_base.html extends layout.html #}
-
-{% block content %}
-    <p><a href="{{ url_for('main.home_page') }}">Home</a></p>
-    <h2>{%trans%}Review Submission{%endtrans%}</h2>
-    <p>5) There should be a page for a reviewer to upload their review. In this lab, the reviewer only
-        gives the paper a score, which is an integer between −2 and 2, −2 being the worst score
-        (totally unacceptable), 2 the best (great paper ).</p>
-{% endblock %}
