@@ -10,7 +10,7 @@ from flask import jsonify, json
 
 from app import db
 from app.forms.forms import PaperSubmissionForm
-from app.models.paper_models import Paper
+from app.models.paper_models import Paper, PaperReviewers
 from app.models.user_models import UserProfileForm, User, Role, UsersRoles
 
 from phpserialize import *
@@ -75,8 +75,42 @@ def assignment_of_reviewers():
 
 @main_blueprint.route('/conference/paper')
 @roles_accepted('admin')  # Limits access to users with the 'admin' role
-def assignment_papers_to_reviewers():
-    return render_template('conference/assignment_papers_to_reviewers.html')
+def admin_list_of_papers():
+    papers = Paper.query.order_by(Paper.id).all()
+
+    paper_reviewer = []
+    paper_authors = []
+    for paper in papers:
+        paper_reviewers = PaperReviewers.query.filter(PaperReviewers.paper_id == paper.id).first()
+        if paper_reviewers:
+            reviewers_bin = io.BytesIO(paper_reviewers.reviewers)
+            reviewers_list = dict_to_list(load(reviewers_bin))
+            reviewer_names = []
+            for reviewer_id in reviewers_list:
+                user = User.query.filter(User.id == reviewer_id).first()
+                reviewer_names.append(str(user.first_name))
+            paper_reviewer.append(', '.join(reviewer_names))
+
+        stream = io.BytesIO(paper.authors)
+        lists = dict_to_list(load(stream))
+        author_names = []
+        for author_id in lists:
+            # Find user where id = author_id
+            user = User.query.filter(User.id == author_id).first()
+            # Convert unicode firstname to str
+            # Push to author_names
+            author_names.append(str(user.first_name))
+        # Convert array to string separated with comma
+        # Push to paper_authors
+        paper_authors.append(', '.join(author_names))
+    # List of status after index
+    paper_status = ['Submitted', 'Under Review', 'Accepted', 'Rejected']
+
+    return render_template('conference/admin_list_of_papers.html',
+            papers=papers, 
+            paper_status=paper_status,
+            paper_authors=paper_authors,
+            paper_reviewer=paper_reviewer)
 
 
 @main_blueprint.route('/conference/overview')

@@ -1,0 +1,49 @@
+{% extends "common/page_base.html" %}
+
+{% block content %}
+    <p><a href="{{ url_for('main.home_page') }}">Home</a> / <a href={{ url_for('main.admin_page') }}>{%trans%}Conference Chair{%endtrans%}</a></p>
+    <h1>List of papers</h1>
+    <p>4) There should be a page for the Conference Chair to assign the papers to reviewers. Usually,
+        each paper is assigned to three reviewers. It should be avoided that an author gets their
+        own paper to review.</p>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Authors</th>
+                    <th>Title</th>
+                    <th>Reviewer</th>                    
+                    <th>Status</th>
+                    <th>Score</th>
+                    <th>Actions</th>                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for paper in papers %}
+                <tr>
+                    <td>{{ paper.id }} </td>
+                    <td>{{ paper_authors[loop.index0] }}</td>
+                    <td>{{ paper.title }}</td>
+                    <td>{{ paper_reviewer[loop.index0] }}</td>                    
+                    <td>{{ paper_status[paper.status] }}</td>
+                    <td>-</td>                    
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Actions
+                            <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Assign Reviewer</a></li>
+                                <li><a href="#">Accept Paper</a></li>
+                                <li><a href="#">Reject Paper</a></li>
+                            </ul>
+                        </div>
+                    </td>                                        
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+

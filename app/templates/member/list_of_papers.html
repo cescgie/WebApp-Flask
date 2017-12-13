@@ -10,22 +10,18 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>Authors</th>
                 <th>Title</th>
-                <th>Abstract</th>
+                <th>Authors</th>                
                 <th>Status</th>
-                <th>Action (TODO->Only Reviewer && Not Author)</th>
             </tr>
         </thead>
         <tbody>
             {% for paper in papers %}
             <tr>
-                <td>{{ paper.id }} </td>
+                <td>{{ paper.id }}</a></td>
+                <td><a href="#">{{ paper.title }}</a></td>                
                 <td>{{ paper_authors[loop.index0] }}</td>
-                <td>{{ paper.title }}</td>
-                <td>{{ paper.abstract }}</td>
                 <td>{{ paper_status[paper.status] }}</td>
-                <td><button>Review</button></td>
             </tr>
             {% endfor %}
         </tbody>

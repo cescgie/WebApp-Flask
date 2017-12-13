@@ -10,7 +10,7 @@ from flask import current_app, json
 from flask_script import Command
 
 from app import db
-from app.models.paper_models import Paper
+from app.models.paper_models import Paper, PaperReviewers
 from app.models.user_models import User, Role
 
 
@@ -28,6 +28,7 @@ def init_db():
     db.create_all()
     create_users()
     create_papers()
+    assign_reviewers()
 
 def create_users():
     """ Create users """
@@ -77,9 +78,9 @@ def find_or_create_user(first_name, last_name, email, password, role=None):
     return user
 
 def create_papers():
-    create_papers_func(serialize([5]),'Title 5', 'Abstract 5',5)
-    create_papers_func(serialize([4,6]),'Title 6', 'Abstract 6',6)
-    create_papers_func(serialize([7]),'Title 7', 'Abstract 7',7)
+    create_papers_func(serialize([5]),'Title 5', 'Abstract 5', 5, 1)
+    create_papers_func(serialize([4,6]),'Title 6', 'Abstract 6', 6, 1)
+    create_papers_func(serialize([7]),'Title 7', 'Abstract 7', 7, 1)
 
     db.session.commit()
 
@@ -94,3 +95,14 @@ def create_papers_func(authors,title,abstract,submittedBy,status=0,mediaRef=None
     db.session.add(paper)
 
 
+def assign_reviewers():
+    assign_reviewers_func(1,serialize([2]))
+    assign_reviewers_func(2,serialize([2,3]))
+    assign_reviewers_func(3,serialize([3,4]))
+
+    db.session.commit()
+
+def assign_reviewers_func(paper_id,reviewers):
+    paper_reviewer = PaperReviewers(paper_id=paper_id,
+                reviewers=reviewers)
+    db.session.add(paper_reviewer)
