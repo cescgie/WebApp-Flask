@@ -122,7 +122,7 @@ def overview_scores():
 
 # ACCEPT: admin, reviewer
 @main_blueprint.route('/review/paper')
-@roles_accepted('admin', 'reviewer')  # Limits access to admin and reviewer
+@roles_accepted('reviewer')  # Limits access to reviewer
 def review_paper():
     paper_reviewers = PaperReviewers.query.filter(PaperReviewers.reviewer_id == current_user.id).all()
     papers = []

@@ -7,9 +7,10 @@
             {% for item in current_user.roles %}
                 {% if item.name == 'admin' %}
                     <p><a href={{ url_for('main.admin_page') }}>{%trans%}Conference Chair{%endtrans%}</a></p>                
+                {% elif item.name == 'reviewer' %}   
+                    <p><a href={{ url_for('main.review_paper') }}>{%trans%}Review Paper{%endtrans%}</a></p>                            
                 {% endif %}                    
             {% endfor %}
-            <p><a href={{ url_for('main.review_paper') }}>{%trans%}Review Paper{%endtrans%}</a></p>            
         {% endif %}
         <p><a href={{ url_for('main.paper_submission') }}>{%trans%}Paper Submission{%endtrans%}</a></p>   
         <p><a href={{ url_for('main.list_of_papers') }}>{%trans%}List of Papers{%endtrans%}</a></p>
