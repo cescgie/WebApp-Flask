@@ -107,9 +107,12 @@ def admin_list_of_papers():
         for author_id in lists:
             # Find user where id = author_id
             user = User.query.filter(User.id == author_id).first()
-            # Convert unicode firstname to str
-            # Push to author_names
-            author_names.append(str(user.first_name))
+            if user.id == current_user.id:
+                author_names.append('You')
+            else:
+                # Convert unicode firstname to str
+                # Push to author_names
+                author_names.append(str(user.first_name))
         # Convert array to string separated with comma
         # Push to paper_authors
         paper_authors.append(', '.join(author_names))
@@ -150,9 +153,12 @@ def review_paper():
         for author_id in lists:
             # Find user where id = author_id
             user = User.query.filter(User.id == author_id).first()
-            # Convert unicode firstname to str
-            # Push to author_names
-            author_names.append(str(user.first_name))
+            if user.id == current_user.id:
+                author_names.append('You')
+            else:
+                # Convert unicode firstname to str
+                # Push to author_names
+                author_names.append(str(user.first_name))
         # Convert array to string separated with comma
         # Push to paper_authors
         paper_authors.append(', '.join(author_names))
@@ -230,9 +236,12 @@ def list_of_papers():
         for author_id in lists:
             # Find user where id = author_id
             user = User.query.filter(User.id == author_id).first()
-            # Convert unicode firstname to str
-            # Push to author_names
-            author_names.append(str(user.first_name))
+            if user.id == current_user.id:
+                author_names.append('You')
+            else:
+                # Convert unicode firstname to str
+                # Push to author_names
+                author_names.append(str(user.first_name))
         # Convert array to string separated with comma
         # Push to paper_authors
         paper_authors.append(', '.join(author_names))
