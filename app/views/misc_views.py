@@ -77,18 +77,27 @@ def assignment_of_reviewers():
 @roles_accepted('admin')  # Limits access to users with the 'admin' role
 def admin_list_of_papers():
     papers = Paper.query.order_by(Paper.id).all()
-
     paper_reviewer = []
+    paper_score = {}
     paper_authors = []
-    for paper in papers:
+    for key,paper in enumerate(papers):
+        paper_score[key] = None
         # get paper reviewer with paper.id
         paper_reviewers = PaperReviewers.query.filter(PaperReviewers.paper_id == paper.id).all()
         if paper_reviewers:
             reviewer_names = []
+            score = None
             for paperc in paper_reviewers:
                 # get user with reviewe_id
                 user = User.query.filter(User.id == paperc.reviewer_id).first()
                 reviewer_names.append(str(user.first_name))
+                if paperc.score:
+                    if(score == None):
+                        score=0 + int(paperc.score)
+                    else:
+                        score=score + int(paperc.score)
+            
+            paper_score[key] = score
             # push to paper reviewer
             paper_reviewer.append(', '.join(reviewer_names))
 
@@ -111,7 +120,8 @@ def admin_list_of_papers():
             papers=papers, 
             paper_status=paper_status,
             paper_authors=paper_authors,
-            paper_reviewer=paper_reviewer)
+            paper_reviewer=paper_reviewer,
+            paper_score=paper_score)
 
 
 @main_blueprint.route('/conference/overview')
@@ -128,7 +138,7 @@ def review_paper():
     papers = []
     paper_authors = []
     for paper_r in paper_reviewers:
-        paper = Paper.query.filter(Paper.id == paper_r.id).first()
+        paper = Paper.query.filter(Paper.id == paper_r.paper_id).first()
         papers.append(paper)
 
         stream = io.BytesIO(paper.authors)
@@ -151,6 +161,22 @@ def review_paper():
             paper_authors=paper_authors,
             paper_status=paper_status)
 
+# Paper submit
+@main_blueprint.route('/review/paper/star')
+@roles_accepted('reviewer')  # Limits access to reviewer
+def review_paper_star():
+    user_id = current_user.id
+    paper_id = request.args.get('paper_id')
+    value = request.args.get('value')
+    value = int(value) - 3
+
+    # Check again user authority to review paper_id
+    paper_reviewer = PaperReviewers.query.filter(PaperReviewers.reviewer_id == user_id,PaperReviewers.paper_id==paper_id).first()
+    if(paper_reviewer):
+        paper_reviewer = PaperReviewers.query.filter(PaperReviewers.reviewer_id == user_id,PaperReviewers.paper_id==paper_id).update(dict(score=value))
+        db.session.commit()
+
+    return jsonify({'paper_id': paper_id, 'value':value})
 
 @main_blueprint.route('/member/submit-paper')
 @login_required # Limits access to authenticated users
@@ -183,7 +209,7 @@ def submit_paper():
         if(key == 'abstract'):
             abstract = value
 
-    create_paper(serialize(authors), str(title), str(abstract), c)
+    create_paper(serialize(authors), str(title), str(abstract), current_user.id)
     db.session.commit()
 
     return jsonify({'data': data})

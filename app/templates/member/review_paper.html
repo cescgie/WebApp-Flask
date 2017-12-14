@@ -12,7 +12,7 @@
                         <th>Title</th>
                         <th>Authors</th>                
                         <th>Status</th>
-                        <th>Action</th>                        
+                        <th>Review</th>                        
                     </tr>
                 </thead>
                 <tbody>
@@ -22,10 +22,51 @@
                         <td><a href="#">{{ paper.title }}</a></td>                
                         <td>{{ paper_authors[loop.index0] }}</td>
                         <td>{{ paper_status[paper.status] }}</td>
-                        <td>Review</td>                        
+                        <td>
+                            <div id="stars-{{ paper.id }}" data-cust-id="{{ paper.id }}" class="starrr"></div>
+                            <span id="review-span-{{paper.id}}" style="display:none"><a href="javascript:void(0)" data-cust-id="{{ paper.id }}" class="review-again">Review again</a></span>
+                        </td>                        
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+
+{% endblock %}
+
+{% block script %}
+    <script src="{{ url_for('static', filename='bootstrap/js/star_rating.js') }}"></script>
+
+    <script type=text/javascript>
+        $( document ).ready(function() {
+            
+            $('.starrr').on('starrr:change', function(e, value){
+                waitingDialog.show('Loading...', {
+                    dialogSize: 'sm',
+                    progressType: 'info'
+                });
+
+                var paper_id = $(e.currentTarget).data('cust-id');  
+
+                $.getJSON($SCRIPT_ROOT + '/review/paper/star', {
+                    "paper_id": paper_id,
+                    "value": value
+                }, function(data) {
+                    console.log(data);
+
+                    $(e.currentTarget).hide()
+                    $('#review-span-'+paper_id).show();
+
+                    waitingDialog.hide();
+                });
+                return false;
+            });
+            
+            $('.review-again').on('click', function(e){
+                var paper_id = $(e.currentTarget).data('cust-id');
+                $('#stars-'+paper_id).show();  
+                $('#review-span-'+paper_id).hide();                
+            });
+        });
+    </script>
 {% endblock %}

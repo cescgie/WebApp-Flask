@@ -19,3 +19,4 @@ class PaperReviewers(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     paper_id = db.Column(db.Integer(), nullable=False)
     reviewer_id = db.Column(db.Integer(), nullable=False)
+    score = db.Column(db.Integer())
