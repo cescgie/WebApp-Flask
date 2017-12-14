@@ -1,0 +1,12 @@
+{% extends "common/page_base.html" %}
+
+{% block content %}
+    <p><a href="{{ url_for('main.home_page') }}">Home</a> / 
+        <a href={{ url_for('main.admin_page') }}>Conference Chair</a> /
+        <a href={{ url_for('main.admin_list_of_papers') }}>List of Papers</a> /
+        <span>My Paper</span>                
+    </p>
+    <h1>Title</h1>
+
+{% endblock %}
+    

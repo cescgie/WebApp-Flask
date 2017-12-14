@@ -132,6 +132,10 @@ def admin_list_of_papers():
 def overview_scores():
     return render_template('conference/overview_scores.html')
 
+@main_blueprint.route('/conference/paper/detail')
+@roles_accepted('admin')
+def conf_paper_detail():
+    return render_template('conference/admin_paper_detail.html')
 
 # ACCEPT: admin, reviewer
 @main_blueprint.route('/review/paper')
