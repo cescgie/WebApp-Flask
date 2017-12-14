@@ -12,7 +12,7 @@
                         <th>Title</th>
                         <th>Authors</th>                
                         <th>Status</th>
-                        <th>Review</th>                        
+                        <th>Your Score</th>                        
                     </tr>
                 </thead>
                 <tbody>
@@ -23,8 +23,9 @@
                         <td>{{ paper_authors[loop.index0] }}</td>
                         <td>{{ paper_status[paper.status] }}</td>
                         <td>
-                            <div id="stars-{{ paper.id }}" data-cust-id="{{ paper.id }}" class="starrr"></div>
-                            <span id="review-span-{{paper.id}}" style="display:none"><a href="javascript:void(0)" data-cust-id="{{ paper.id }}" class="review-again">Review again</a></span>
+                            <span id="score-{{ paper.id }}">{{ paper_scores[loop.index0] }}</span>
+                            <div style="display:none" id="stars-{{ paper.id }}" data-cust-id="{{ paper.id }}" class="starrr"></div>
+                            <span id="review-span-{{paper.id}}"><a href="javascript:void(0)" data-cust-id="{{ paper.id }}" class="review-again">Update Score</a></span>
                         </td>                        
                     </tr>
                     {% endfor %}
@@ -52,11 +53,11 @@
                     "paper_id": paper_id,
                     "value": value
                 }, function(data) {
-                    console.log(data);
-
+                    var score = data.value;
                     $(e.currentTarget).hide()
+                    $('#score-'+paper_id).text(score);                    
                     $('#review-span-'+paper_id).show();
-
+                    
                     waitingDialog.hide();
                 });
                 return false;

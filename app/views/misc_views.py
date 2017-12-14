@@ -137,9 +137,12 @@ def review_paper():
     paper_reviewers = PaperReviewers.query.filter(PaperReviewers.reviewer_id == current_user.id).all()
     papers = []
     paper_authors = []
+    paper_scores = []
     for paper_r in paper_reviewers:
         paper = Paper.query.filter(Paper.id == paper_r.paper_id).first()
         papers.append(paper)
+
+        paper_scores.append(paper_r.score)
 
         stream = io.BytesIO(paper.authors)
         lists = dict_to_list(load(stream))
@@ -159,6 +162,7 @@ def review_paper():
     return render_template('member/review_paper.html',
             papers=papers,
             paper_authors=paper_authors,
+            paper_scores=paper_scores,
             paper_status=paper_status)
 
 # Paper submit
