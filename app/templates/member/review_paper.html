@@ -24,8 +24,10 @@
                         <td>{{ paper_status[paper.status] }}</td>
                         <td>
                             <span id="score-{{ paper.id }}">{{ paper_scores[loop.index0] }}</span>
-                            <div style="display:none" id="stars-{{ paper.id }}" data-cust-id="{{ paper.id }}" class="starrr"></div>
-                            <span id="review-span-{{paper.id}}"><a href="javascript:void(0)" data-cust-id="{{ paper.id }}" class="review-again">Update Score</a></span>
+                            {% if paper.status != 2 and paper.status != 3 %}
+                                <div style="display:none" id="stars-{{ paper.id }}" data-cust-id="{{ paper.id }}" class="starrr"></div>
+                                <span id="review-span-{{paper.id}}"><a href="javascript:void(0)" data-cust-id="{{ paper.id }}" class="review-again">Update Score</a></span>
+                            {% endif %}                            
                         </td>                        
                     </tr>
                     {% endfor %}
@@ -42,10 +44,7 @@
         $( document ).ready(function() {
             
             $('.starrr').on('starrr:change', function(e, value){
-                waitingDialog.show('Loading...', {
-                    dialogSize: 'sm',
-                    progressType: 'info'
-                });
+                waitingDialog.show('Loading...', {dialogSize: 'sm',progressType: 'info'});
 
                 var paper_id = $(e.currentTarget).data('cust-id');  
 
@@ -53,6 +52,11 @@
                     "paper_id": paper_id,
                     "value": value
                 }, function(data) {
+                    if(data.status  === 200){
+                        // do next action
+                    }else{
+                        // show error message
+                    }
                     var score = data.value;
                     $(e.currentTarget).hide()
                     $('#score-'+paper_id).text(score);                    

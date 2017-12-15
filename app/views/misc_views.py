@@ -237,13 +237,27 @@ def review_paper_star():
     value = request.args.get('value')
     value = int(value) - 3
 
-    # Check again user authority to review paper_id
-    paper_reviewer = PaperReviewers.query.filter(PaperReviewers.reviewer_id == user_id,PaperReviewers.paper_id==paper_id).first()
-    if(paper_reviewer):
-        paper_reviewer = PaperReviewers.query.filter(PaperReviewers.reviewer_id == user_id,PaperReviewers.paper_id==paper_id).update(dict(score=value))
-        db.session.commit()
+    status=200
+    message='Process success'
+    paper_status = ['Submitted', 'Under Review', 'Accepted', 'Rejected']
 
-    return jsonify({'paper_id': paper_id, 'value':value})
+    # Allowed user to give score only if paper still under review
+    paper = Paper.query.filter(Paper.id == paper_id).first()
+    if(paper.status != 2 or paper.status != 3):
+        # Check again user authority to review paper_id
+        paper_reviewer = PaperReviewers.query.filter(PaperReviewers.reviewer_id == user_id,PaperReviewers.paper_id==paper_id).first()
+        if(paper_reviewer):
+            paper_reviewer = PaperReviewers.query.filter(PaperReviewers.reviewer_id == user_id,PaperReviewers.paper_id==paper_id).update(dict(score=value))
+            db.session.commit()
+        else:
+            status=303
+            message='No authorization'
+    else:
+        status=304
+        message='Paper has been '+paper_status[paper.status] # string with paper status
+
+    print(message)
+    return jsonify({'paper_id': paper_id, 'value':value, 'status':status, 'message':message})
 
 @main_blueprint.route('/member/submit-paper')
 @login_required # Limits access to authenticated users
