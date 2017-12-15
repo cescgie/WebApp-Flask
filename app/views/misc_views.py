@@ -132,10 +132,63 @@ def admin_list_of_papers():
 def overview_scores():
     return render_template('conference/overview_scores.html')
 
-@main_blueprint.route('/conference/paper/detail')
+@main_blueprint.route('/conference/paper/detail/<paper_id>')
 @roles_accepted('admin')
-def conf_paper_detail():
-    return render_template('conference/admin_paper_detail.html')
+def conf_paper_detail(paper_id):
+    paper = Paper.query.filter(Paper.id == paper_id).first()
+
+    author_names = []
+    stream = io.BytesIO(paper.authors)
+    lists = dict_to_list(load(stream))
+
+    for author_id in lists:
+        # Find user where id = author_id
+        user = User.query.filter(User.id == author_id).first()
+        # Convert unicode firstname to str
+        # Push to author_names
+        author_names.append(str(user.first_name) +' '+ str(user.last_name))
+
+    author_names = ', '.join(author_names)
+
+    reviewer_names = []
+    paper_reviewers = PaperReviewers.query.filter(PaperReviewers.paper_id == paper_id).all()
+    for reviewers in paper_reviewers:
+        # Find user where id = author_id
+        user = User.query.filter(User.id == reviewers.reviewer_id).first()
+        # Convert unicode firstname to str
+        # Push to author_names
+        reviewer_names.append(str(user.first_name) +' '+ str(user.last_name) +' ('+ str(reviewers.score)+')')
+
+    reviewer_names = ', '.join(reviewer_names)
+
+    # List of status after index
+    paper_status = ['Submitted', 'Under Review', 'Accepted', 'Rejected']
+
+    return render_template('conference/admin_paper_detail.html',
+        paper=paper,
+        author_names=author_names,
+        reviewer_names=reviewer_names,
+        paper_status=paper_status)
+
+# Paper action by conference chair
+@main_blueprint.route('/conference/action/paper')
+@roles_accepted('admin')  # Limits access to reviewer
+def conf_action_paper():
+    paper_id = request.args.get('paper_id')
+    action = request.args.get('action')
+    actionStr = ''
+
+    if(int(action)==1):
+        actionStr = 'Under Review'
+    elif(int(action)==2):
+        actionStr = 'Accepted'
+    elif(int(action)==3):
+        actionStr = 'Rejected'
+    
+    paper = Paper.query.filter_by(id=paper_id).update(dict(status=int(action)))
+    db.session.commit()
+
+    return jsonify({'paper_id': paper_id, 'actionStr':actionStr, 'action':action})
 
 # ACCEPT: admin, reviewer
 @main_blueprint.route('/review/paper')
