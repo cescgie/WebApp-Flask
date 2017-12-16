@@ -17,7 +17,7 @@
     <button type="button" class="btn btn-success setPaperAction {% if paper.status != 1 %} hidden {% endif %}" data-toggle="modal" data-target="#acceptPaperModal">Accept Paper</button>
     <button type="button" class="btn btn-danger setPaperAction {% if paper.status != 1 %} hidden {% endif %}" data-toggle="modal" data-target="#rejectPaperModal">Reject Paper</button>  
     <button type="button" class="btn btn-warning setUnderReview {% if paper.status == 1 %} hidden {% endif %}" data-toggle="modal" data-target="#setUnderReviewModal">Cancel Action</button>                    
-        
+    
     <!-- Modal -->
     <div id="assignReviewerModal" class="modal fade" role="dialog">
       <div class="modal-dialog">
@@ -144,10 +144,12 @@
                 paper_id:paper_id
             }, function(data) {
                 if(data.status === 200){
+                    $.notify(data.message, "success");                    
                     $('#reviewer_names').text(data.reviewer_names);                
                 }else{
+                    $.notify(data.message, "error");                
                 }
-                
+
                 $('#assignReviewerModal').modal('hide');                
                 waitingDialog.hide();
             });
@@ -168,11 +170,16 @@
                 "action": 2,
                 "paper_id": paper_id
             }, function(data) {
-                $('#paper_status').text(data.actionStr);
-                $('.setPaperAction').hide();
-                $('.setUnderReview').show();                
-                $('.setUnderReview').removeClass('hidden');                
-                $('#acceptPaperModal').modal('hide');
+                if(data.status === 200){
+                    $('#paper_status').text(data.actionStr);
+                    $('.setPaperAction').hide();
+                    $('.setUnderReview').show();                
+                    $('.setUnderReview').removeClass('hidden');  
+                    $.notify(data.message, "success");                    
+                }else{
+                    $.notify(data.message, "error");                
+                }
+                $('#acceptPaperModal').modal('hide');                
                 waitingDialog.hide();
             });
             return false;
@@ -191,10 +198,15 @@
                 "action": 3,
                 "paper_id": paper_id
             }, function(data) {
-                $('#paper_status').text(data.actionStr);
-                $('.setPaperAction').hide();
-                $('.setUnderReview').show();                
-                $('.setUnderReview').removeClass('hidden');                
+                if(data.status === 200){
+                    $('#paper_status').text(data.actionStr);
+                    $('.setPaperAction').hide();
+                    $('.setUnderReview').show();                
+                    $('.setUnderReview').removeClass('hidden');
+                    $.notify(data.message, "success");                    
+                }else{
+                    $.notify(data.message, "error");
+                }                    
                 $('#rejectPaperModal').modal('hide');
                 waitingDialog.hide();
             });
@@ -214,10 +226,15 @@
                 "action": 1,
                 "paper_id": paper_id
             }, function(data) {
-                $('#paper_status').text(data.actionStr);
-                $('.setUnderReview').hide();
-                $('.setPaperAction').show();                
-                $('.setPaperAction').removeClass('hidden');
+                if(data.status === 200){                    
+                    $('#paper_status').text(data.actionStr);
+                    $('.setUnderReview').hide();
+                    $('.setPaperAction').show();                
+                    $('.setPaperAction').removeClass('hidden');
+                    $.notify(data.message, "success");                    
+                }else{
+                    $.notify(data.message, "error");
+                }
                 $('#setUnderReviewModal').modal('hide');
                 waitingDialog.hide();
             });
@@ -229,7 +246,6 @@
         $('#select-reviewer').multiselect({
             enableFiltering: true,   
         })
-
     });
 </script>
 {% endblock %}

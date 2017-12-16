@@ -53,15 +53,14 @@
                     "value": value
                 }, function(data) {
                     if(data.status  === 200){
-                        // do next action
+                        var score = data.value;
+                        $(e.currentTarget).hide()
+                        $('#score-'+paper_id).text(score);                    
+                        $('#review-span-'+paper_id).show();
+                        $.notify(data.message, "success");                    
                     }else{
-                        // show error message
+                        $.notify(data.message, "error");
                     }
-                    var score = data.value;
-                    $(e.currentTarget).hide()
-                    $('#score-'+paper_id).text(score);                    
-                    $('#review-span-'+paper_id).show();
-                    
                     waitingDialog.hide();
                 });
                 return false;

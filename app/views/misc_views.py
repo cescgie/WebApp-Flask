@@ -241,6 +241,9 @@ def conf_assign_reviewer():
 @main_blueprint.route('/conference/action/paper')
 @roles_accepted('admin')  # Limits access to reviewer
 def conf_action_paper():
+    status=200
+    message='Process success'
+
     paper_id = request.args.get('paper_id')
     action = request.args.get('action')
     actionStr = ''
@@ -255,7 +258,7 @@ def conf_action_paper():
     paper = Paper.query.filter_by(id=paper_id).update(dict(status=int(action)))
     db.session.commit()
 
-    return jsonify({'paper_id': paper_id, 'actionStr':actionStr, 'action':action})
+    return jsonify({'status':status, 'message':message, 'paper_id': paper_id, 'actionStr':actionStr, 'action':action})
 
 # ACCEPT: admin, reviewer
 @main_blueprint.route('/review/paper')
@@ -393,6 +396,9 @@ def list_of_papers():
 @main_blueprint.route('/activate/user')
 @roles_accepted('admin')
 def activate_user_admin():
+    status=200
+    message='Process success'
+
     id = request.args.get('id')
     active = request.args.get('active')
 
@@ -401,13 +407,16 @@ def activate_user_admin():
     user = User.query.filter_by(id=id).update(dict(active=activation))
     db.session.commit()
 
-    return jsonify({'activation': activation, 'active': active})
+    return jsonify({'status':status, 'message':message, 'activation': activation, 'active': active})
 
 
 # User assignation as reviewer
 @main_blueprint.route('/assign/user')
 @roles_accepted('admin')
 def assign_user_admin():
+    status=200
+    message='Process success'
+
     id = request.args.get('id')
     user_role = UsersRoles.query.filter(UsersRoles.user_id == id).first()
     # Check if user role exist and prevent update admin role (role_id = 1)
@@ -422,7 +431,7 @@ def assign_user_admin():
         user = find_or_update_user(id, reviewer_role)
         action = 1
 
-    return jsonify({'id':id,'action':action})
+    return jsonify({'status':status, 'message':message, 'id':id, 'action':action})
 
 def create_paper(authors, title, abstract, submmitedBy):
     paper = Paper(authors=authors, title=title, abstract=abstract, submittedBy=submmitedBy, status=0)

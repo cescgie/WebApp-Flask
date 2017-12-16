@@ -86,7 +86,12 @@
                 "id": id,
                 "active": action
             }, function(data) {
-                $(e.currentTarget).data('cust-value', !lastValue);
+                if(data.status === 200){                    
+                    $(e.currentTarget).data('cust-value', !lastValue);
+                    $.notify(data.message, "success");                    
+                }else{
+                    $.notify(data.message, "error");
+                }
                 waitingDialog.hide();
             });
             return false;
@@ -105,13 +110,20 @@
                 "id": id,
                 "user_name": user_name
             }, function(data) {
-                var role = '';
-                if (data.action == 1) {
-                    role = 'Reviewer';
-                } else {
-                    role = 'Member';
+                if(data.status === 200){
+                    var role = '';
+                    if (data.action == 1) {
+                        role = 'Reviewer';
+                    } else {
+                        role = 'Member';
+                    }
+
+                    $('#role-' + id).text(role);
+                    $.notify(data.message, "success");                    
+                }else{
+                    $.notify(data.message, "error");
                 }
-                $('#role-' + id).text(role);
+
                 waitingDialog.hide();
             });
             return false;
