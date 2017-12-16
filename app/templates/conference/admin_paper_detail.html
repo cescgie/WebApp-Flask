@@ -9,7 +9,7 @@
     <h1>{{ paper.title }}</h1>
     <p>Abstract: {{ paper.abstract }}</p>
     <p>Authors: {{ author_names }}</p> 
-    <p>Reviewer (Score): {{ reviewer_names }}</p>
+    <p>Reviewer (Score): <span id="reviewer_names">{{ reviewer_names }}</span></p>
     <p>Status: <span id="paper_status">{{ paper_status[paper.status] }}</span></p>
     <input type="hidden" id="paper_id" value="{{ paper.id }}">
 
@@ -24,17 +24,28 @@
     
         <!-- Modal content-->
         <div class="modal-content">
+        <form name="assign-reviewers" method="POST" id="assign-reviewers">                        
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Assign Reviewers</h4>
           </div>
           <div class="modal-body">
-            <p>Reviewer List.</p>
+                <div class="form-group">
+                    <label for="select-reviewer">Reviewers</label><br>
+                    <select multiple="multiple" class='form-control' name="select-reviewer" id="select-reviewer" >
+                        {% for user in users %}
+                            {% if user.id != 1 %}
+                                <option value="{{user.id}}">{{user.first_name}} {{user.last_name}}</option>                    
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary save">Confirm</button>            
+            <button type="submit" id="submit" class="btn btn-primary save">Submit</button>            
           </div>
+        </form>        
         </div>
     
       </div>
@@ -110,8 +121,37 @@
     $(function() {
         $('#assignReviewerModal .save').click(function (e) {
             e.preventDefault();
-            $('#assignReviewerModal').modal('hide');
-            //$(this).tab('show')
+            waitingDialog.show('Loading...', {
+                dialogSize: 'sm',
+                progressType: 'info'
+            });
+            var data = $("#assign-reviewers :input").serializeArray(),dataObj = {};
+
+            var author_arr = [];
+            $(data).each(function(i, field){
+                if(field.name == 'select-reviewer'){
+                    author_arr.push(Number(field.value))
+                }else{
+                    dataObj[field.name] = field.value;                    
+                }
+            });
+            dataObj['reviewers'] = author_arr;
+            
+            var paper_id=$('#paper_id').val();
+            
+            $.getJSON($SCRIPT_ROOT + '/conference/assign/reviewer', {
+                data:JSON.stringify(dataObj),
+                paper_id:paper_id
+            }, function(data) {
+                if(data.status === 200){
+                    $('#reviewer_names').text(data.reviewer_names);                
+                }else{
+                }
+                
+                $('#assignReviewerModal').modal('hide');                
+                waitingDialog.hide();
+            });
+
             return false;
         })
 
@@ -183,8 +223,13 @@
             });
             return false;
         })
+
+        // Initialize the plugin:
+        // https://github.com/davidstutz/bootstrap-multiselect
+        $('#select-reviewer').multiselect({
+            enableFiltering: true,   
+        })
+
     });
 </script>
-
 {% endblock %}
-    

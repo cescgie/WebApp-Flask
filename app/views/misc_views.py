@@ -18,6 +18,7 @@ from io import StringIO
 import io
 
 from phpserialize import serialize
+from sqlalchemy import or_
 
 # When using a Flask app factory we must use a blueprint to avoid needing 'app' for '@app.route'
 main_blueprint = Blueprint('main', __name__, template_folder='templates')
@@ -68,7 +69,7 @@ def user_profile_page():
 @main_blueprint.route('/conference/reviewer')
 @roles_accepted('admin')  # Limits access to users with the 'admin' role
 def assignment_of_reviewers():
-    users = User.query.order_by(User.last_name).all()
+    users = User.query.order_by(User.id).all()
     return render_template('conference/assignment_of_reviewers.html', 
                         users=users)
 
@@ -135,21 +136,38 @@ def overview_scores():
 @main_blueprint.route('/conference/paper/detail/<paper_id>')
 @roles_accepted('admin')
 def conf_paper_detail(paper_id):
+    # Populate by paper by paper_id
     paper = Paper.query.filter(Paper.id == paper_id).first()
-
-    author_names = []
+    # Convert paper author from binary to list
     stream = io.BytesIO(paper.authors)
     lists = dict_to_list(load(stream))
 
+    # Convert list authors to string separated with comma
+    authorList= ','.join(str(v) for v in lists)
+
+    # User list for multiple select to assign reviewer
+    # Prevent author to set as reviewer
+    # Do -> Get all users where id not in author list
+    users_ = User.query.filter(User.id.notin_(authorList))
+    # Sort only user with role = reviewer and not admin
+    users = []
+    for user in users_:
+        userRole = UsersRoles.query.filter(UsersRoles.user_id == user.id).first()
+        if(userRole and userRole.user_id != 1):
+            userc = User.query.filter(User.id == userRole.user_id).first()
+            users.append(userc)
+
+    # Populate author names
+    author_names = []
     for author_id in lists:
         # Find user where id = author_id
         user = User.query.filter(User.id == author_id).first()
         # Convert unicode firstname to str
         # Push to author_names
         author_names.append(str(user.first_name) +' '+ str(user.last_name))
-
     author_names = ', '.join(author_names)
 
+    # Populate current reviewer names
     reviewer_names = []
     paper_reviewers = PaperReviewers.query.filter(PaperReviewers.paper_id == paper_id).all()
     for reviewers in paper_reviewers:
@@ -158,7 +176,6 @@ def conf_paper_detail(paper_id):
         # Convert unicode firstname to str
         # Push to author_names
         reviewer_names.append(str(user.first_name) +' '+ str(user.last_name) +' ('+ str(reviewers.score)+')')
-
     reviewer_names = ', '.join(reviewer_names)
 
     # List of status after index
@@ -168,7 +185,57 @@ def conf_paper_detail(paper_id):
         paper=paper,
         author_names=author_names,
         reviewer_names=reviewer_names,
-        paper_status=paper_status)
+        paper_status=paper_status,
+        users=users)
+
+# Paper action by conference chair
+@main_blueprint.route('/conference/assign/reviewer')
+@roles_accepted('admin')  # Limits access to reviewer
+def conf_assign_reviewer():
+    status=200
+    message='Process success'
+
+    paper_id = request.args.get('paper_id')
+    data = request.args.get('data')
+    
+    parse = json.loads(data)
+    reviewers = ''
+    for key, value in parse.items():
+        if(key == 'reviewers'):
+            reviewers = value
+
+    reviewer_names = []
+
+    if(reviewers):
+        # Check if paper reviewer with paper_id and reviewer_id already exist
+        # If not exist, create new paper reviewer
+        # if already exist skip 
+        for reviewer_id in reviewers:
+            paper_reviewer = PaperReviewers.query.filter(PaperReviewers.reviewer_id == reviewer_id, PaperReviewers.paper_id == paper_id).first()
+            if not paper_reviewer:
+                assign_reviewers_func(paper_id,reviewer_id)
+                db.session.commit()
+
+        # get paper_reviewer by paper_id
+        # remove all paper_reviewer where reviewer_id not in reviewers
+        new_reviewer_lists= ','.join(str(v) for v in reviewers)
+        paper_reviewers = PaperReviewers.query.filter(PaperReviewers.reviewer_id.notin_(new_reviewer_lists), PaperReviewers.paper_id == paper_id).all()
+        for paper_reviewer in paper_reviewers:
+            db.session.delete(paper_reviewer)
+            db.session.commit()
+
+        # Populate current reviewer names
+        paper_reviewers = PaperReviewers.query.filter(PaperReviewers.paper_id == paper_id).all()
+        for reviewers in paper_reviewers:
+            # Find user where id = author_id
+            user = User.query.filter(User.id == reviewers.reviewer_id).first()
+            # Convert unicode firstname to str
+            # Push to author_names
+            reviewer_names.append(str(user.first_name) +' '+ str(user.last_name) +' ('+ str(reviewers.score)+')')
+        reviewer_names = ', '.join(reviewer_names)
+
+    return jsonify({'status':status, 'message':message, 'reviewer_names': reviewer_names})
+
 
 # Paper action by conference chair
 @main_blueprint.route('/conference/action/paper')
@@ -256,7 +323,6 @@ def review_paper_star():
         status=304
         message='Paper has been '+paper_status[paper.status] # string with paper status
 
-    print(message)
     return jsonify({'paper_id': paper_id, 'value':value, 'status':status, 'message':message})
 
 @main_blueprint.route('/member/submit-paper')
@@ -379,3 +445,11 @@ def find_or_update_user(id, role=None):
         user.roles.append(role)
         db.session.commit()
     return user
+
+def assign_reviewers_func(paper_id,reviewer_id,score=None):
+    paper_reviewer = PaperReviewers(
+                paper_id=paper_id,
+                reviewer_id=reviewer_id,
+                score=score)
+    db.session.add(paper_reviewer)
+    return paper_reviewer
