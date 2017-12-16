@@ -392,6 +392,61 @@ def list_of_papers():
             paper_status=paper_status,
             paper_authors=paper_authors)
 
+@main_blueprint.route('/paper/detail/<paper_id>')
+@login_required # Limits access to authenticated users
+def member_paper_detail(paper_id):
+    # Populate by paper by paper_id
+    paper = Paper.query.filter(Paper.id == paper_id).first()
+    # Convert paper author from binary to list
+    stream = io.BytesIO(paper.authors)
+    lists = dict_to_list(load(stream))
+
+    # Convert list authors to string separated with comma
+    authorList= ','.join(str(v) for v in lists)
+
+    # User list for multiple select to assign reviewer
+    # Prevent author to set as reviewer
+    # Do -> Get all users where id not in author list
+    users_ = User.query.filter(User.id.notin_(authorList))
+    # Sort only user with role = reviewer and not admin
+    users = []
+    for user in users_:
+        userRole = UsersRoles.query.filter(UsersRoles.user_id == user.id).first()
+        if(userRole and userRole.user_id != 1):
+            userc = User.query.filter(User.id == userRole.user_id).first()
+            users.append(userc)
+
+    # Populate author names
+    author_names = []
+    for author_id in lists:
+        # Find user where id = author_id
+        user = User.query.filter(User.id == author_id).first()
+        # Convert unicode firstname to str
+        # Push to author_names
+        author_names.append(str(user.first_name) +' '+ str(user.last_name))
+    author_names = ', '.join(author_names)
+
+    # Populate current reviewer names
+    reviewer_names = []
+    paper_reviewers = PaperReviewers.query.filter(PaperReviewers.paper_id == paper_id).all()
+    for reviewers in paper_reviewers:
+        # Find user where id = author_id
+        user = User.query.filter(User.id == reviewers.reviewer_id).first()
+        # Convert unicode firstname to str
+        # Push to author_names
+        reviewer_names.append(str(user.first_name) +' '+ str(user.last_name) +' ('+ str(reviewers.score)+')')
+    reviewer_names = ', '.join(reviewer_names)
+
+    # List of status after index
+    paper_status = ['Submitted', 'Under Review', 'Accepted', 'Rejected']
+
+    return render_template('member/paper_detail.html',
+        paper=paper,
+        author_names=author_names,
+        reviewer_names=reviewer_names,
+        paper_status=paper_status,
+        users=users)
+
 # User activation
 @main_blueprint.route('/activate/user')
 @roles_accepted('admin')

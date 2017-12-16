@@ -7,10 +7,10 @@
         <span>{{ paper.title }}</span>                
     </p>
     <h1>{{ paper.title }}</h1>
-    <p>Abstract: {{ paper.abstract }}</p>
     <p>Authors: {{ author_names }}</p> 
     <p>Reviewer (Score): <span id="reviewer_names">{{ reviewer_names }}</span></p>
     <p>Status: <span id="paper_status">{{ paper_status[paper.status] }}</span></p>
+    <p>Abstract: {{ paper.abstract }}</p>    
     <input type="hidden" id="paper_id" value="{{ paper.id }}">
 
     <button type="button" class="btn btn-info setPaperAction {% if paper.status != 1 %} hidden {% endif %}" data-toggle="modal" data-target="#assignReviewerModal">Assign Reviewer</button>            

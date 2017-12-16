@@ -14,14 +14,18 @@
                 <th>Title</th>
                 <th>Authors</th>                
                 <th>Status</th>
+                <th>Action</th>                
             </tr>
         </thead>
         <tbody>
             {% for paper in papers %}
             <tr>
-                <td><a href="#">{{ paper.title }}</a></td>                
+                <td>{{ paper.title }}</td>                
                 <td>{{ paper_authors[loop.index0] }}</td>
                 <td>{{ paper_status[paper.status] }}</td>
+                <td>
+                    <a href="/paper/detail/{{ paper.id }}" class="btn btn-primary" type="button">Show details</a> 
+                </td>
             </tr>
             {% endfor %}
         </tbody>

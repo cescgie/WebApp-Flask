@@ -1,0 +1,15 @@
+{% extends "common/page_base.html" %}
+
+{% block content %}
+    <p><a href="{{ url_for('main.home_page') }}">Home</a> / 
+        <a href="{{ url_for('main.list_of_papers')}}">List Of Papers</a> /        
+        <span>{{ paper.title }}</span>                
+    </p>
+    <h1>{{ paper.title }}</h1>
+    <p>Authors: {{ author_names }}</p> 
+    <p>Reviewer (Score): <span id="reviewer_names">{{ reviewer_names }}</span></p>
+    <p>Status: <span id="paper_status">{{ paper_status[paper.status] }}</span></p>
+    <p>Abstract: {{ paper.abstract }}</p>
+    
+{% endblock %}
+    
