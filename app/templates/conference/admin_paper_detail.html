@@ -2,8 +2,8 @@
 
 {% block content %}
     <p><a href="{{ url_for('main.home_page') }}">Home</a> / 
-        <a href={{ url_for('main.admin_page') }}>Conference Chair</a> /
-        <a href={{ url_for('main.admin_list_of_papers') }}>List of Papers</a> /
+        <a href="{{ url_for('main.admin_page') }}">Conference Chair</a> /
+        <a href="{{ url_for('main.admin_list_of_papers') }}">"List of Papers</a> /
         <span>{{ paper.title }}</span>                
     </p>
     <h1>{{ paper.title }}</h1>
@@ -31,7 +31,7 @@
           </div>
           <div class="modal-body">
                 <div class="form-group">
-                    <label for="select-reviewer">Reviewers</label><br>
+                    <label for="select-reviewer">Available Reviewers</label><br>
                     <select multiple="multiple" class='form-control' name="select-reviewer" id="select-reviewer" >
                         {% for user in users %}
                             {% if user.id != 1 %}
@@ -39,6 +39,8 @@
                             {% endif %}
                         {% endfor %}
                     </select>
+                    <br><br>
+                    <p><a href="{{ url_for('main.assignment_of_reviewers') }}">Assign more reviewers</a></p>
                 </div>
           </div>
           <div class="modal-footer">
