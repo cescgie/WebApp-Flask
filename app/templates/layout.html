@@ -25,21 +25,48 @@
     </head>
     <body>
         {% block body %}
-        <!-- Application specific HTML -->
         <div id="header-div" class="clearfix with-margins">
-            <div class="pull-left"><a href="{{ url_for('main.home_page') }}"><span class="header-title">{{ user_manager.app_name }}</span></a></div>
-            <div class="pull-right">
-                {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('main.member_page') }}">{{ current_user.first_name or current_user.user_auth.username }}</a>
-                    &nbsp; | &nbsp;
-                    <a href="{{ url_for('user.logout') }}">Sign out</a>
-                {% else %}
-                    <a href="{{ url_for('user.login') }}">Sign in</a>
-                {% endif %}
-            </div>
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="{{ url_for('main.home_page') }}">{{ user_manager.app_name }}</a>
+                    </div>
+                    <div class="collapse navbar-collapse" id="navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+                            {% if current_user.is_authenticated %}
+                                {% if current_user.roles %}
+                                    {% for item in current_user.roles %}
+                                        <li class="dropdown">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Conference Chair <span class="caret"></span></a>
+                                            <ul class="dropdown-menu">
+                                                <li><a href={{ url_for('main.assignment_of_reviewers') }}>Assign of Reviewers</a></li>
+                                                <li><a href={{ url_for('main.admin_list_of_papers') }}>List of Papers</a></li>
+                                            </ul>
+                                        </li>
+                                    {% endfor %}
+                                {% endif %}
+                                <li><a href={{ url_for('main.paper_submission') }}>Paper Submission</a></li>
+                                <li><a href={{ url_for('main.list_of_papers') }}>List of Papers</a></li>
+                            {% endif %}
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            {% if current_user.is_authenticated %}
+                                <li><a href="{{ url_for('main.member_page') }}">{{ current_user.first_name or current_user.user_auth.username }}</a></li>
+                                <li><a href="{{ url_for('user.logout') }}">Sign out</a></li>
+                            {% else %}
+                                <li><a href="{{ url_for('user.login') }}">Sign in</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </nav>
         </div>
-
-        <hr class="no-margins"/>
 
         <div id="main-div" class="with-margins">
         {% block pre_content %}{% endblock %}
