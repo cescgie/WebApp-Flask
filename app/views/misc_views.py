@@ -1,33 +1,27 @@
-# Copyright 2014 SolidBuilds.com. All rights reserved
-#
-# Authors: Ling Thio <ling.thio@gmail.com>
-
-
 from flask import Blueprint, redirect, render_template
 from flask import request, url_for
 from flask_user import current_user, login_required, roles_accepted
 from flask import jsonify, json
 
 from app import db
-from app.forms.forms import PaperSubmissionForm
 from app.models.paper_models import Paper, PaperReviewers
 from app.models.user_models import UserProfileForm, User, Role, UsersRoles
 
 from phpserialize import *
-from io import StringIO
 import io
 
 from phpserialize import serialize
-from sqlalchemy import or_
 
-# When using a Flask app factory we must use a blueprint to avoid needing 'app' for '@app.route'
 main_blueprint = Blueprint('main', __name__, template_folder='templates')
 
 
 # The Home page is accessible to anyone
 @main_blueprint.route('/')
 def home_page():
-    return render_template('pages/home_page.html')
+    if current_user.is_authenticated:
+        return redirect("/member", code=302)
+    else:
+        return redirect("/user/sign-in", code=302)
 
 
 # The User page is accessible to authenticated users (users that have logged in)
