@@ -1,4 +1,7 @@
-# Starter
+# Peer Review System
+Flask application for Peer Review System based on [Flask-User starter app](https://github.com/lingthio/Flask-User-starter-app.git)
+
+## Starter
 - If there is no virtualenv yet , create one
     `virtualenv env`
 - Activate virtualenv
@@ -10,19 +13,13 @@
 - Run with debug
     `python manage.py runserver`
 
-# Development
+## Development
 - Activate virtualenv
     `source env/bin/activate`
 - Run with debug
     `python manage.py runserver`
 
-# TODO
-- New ROLE: 'reviewer'
-- ...
-- ...
-
-
-# TASKS
+## TASKS
 1. There should be a registration page. The user is identified by their email address, and
 must provide a password of their choice.
 2. There should be a page for the Conference Chair to assign some of the registered users to
