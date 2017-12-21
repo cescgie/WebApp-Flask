@@ -42,13 +42,17 @@
                             {% if current_user.is_authenticated %}
                                 {% if current_user.roles %}
                                     {% for item in current_user.roles %}
-                                        <li class="dropdown">
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Conference Chair <span class="caret"></span></a>
-                                            <ul class="dropdown-menu">
-                                                <li><a href={{ url_for('main.assignment_of_reviewers') }}>Assign of Reviewers</a></li>
-                                                <li><a href={{ url_for('main.admin_list_of_papers') }}>List of Papers</a></li>
-                                            </ul>
-                                        </li>
+                                        {% if item.name == 'admin' %}	
+                                            <li class="dropdown">
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Conference Chair <span class="caret"></span></a>
+                                                <ul class="dropdown-menu">
+                                                    <li><a href={{ url_for('main.assignment_of_reviewers') }}>Assign of Reviewers</a></li>
+                                                    <li><a href={{ url_for('main.admin_list_of_papers') }}>List of Papers</a></li>
+                                                </ul>
+                                            </li>
+                                        {% elif item.name == 'reviewer' %}   		
+                                            <li><a href={{ url_for('main.review_paper') }}>Review Paper</a></li>                        		
+                                        {% endif %}   
                                     {% endfor %}
                                 {% endif %}
                                 <li><a href={{ url_for('main.paper_submission') }}>Paper Submission</a></li>
