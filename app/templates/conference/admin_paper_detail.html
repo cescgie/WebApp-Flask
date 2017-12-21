@@ -121,13 +121,13 @@
 {% block script %}
 <script type=text/javascript>
     $(function() {
-        $('#assignReviewerModal.save').click(function (e) {
+        $('#assignReviewerModal .save').click(function (e) {
             e.preventDefault();
             waitingDialog.show('Loading...', {
                 dialogSize: 'sm',
                 progressType: 'info'
             });
-            var data = $("#assign-reviewers:input").serializeArray(),dataObj = {};
+            var data = $("#assign-reviewers :input").serializeArray(),dataObj = {};
 
             var author_arr = [];
             $(data).each(function(i, field){
@@ -138,7 +138,7 @@
                 }
             });
             dataObj['reviewers'] = author_arr;
-            
+
             var paper_id=$('#paper_id').val();
             
             $.getJSON($SCRIPT_ROOT + '/conference/assign/reviewer', {
@@ -159,7 +159,7 @@
             return false;
         });
 
-        $('#acceptPaperModal.save').click(function (e) {
+        $('#acceptPaperModal .save').click(function (e) {
             waitingDialog.show('Loading...', {
                 dialogSize: 'sm',
                 progressType: 'info'
@@ -186,7 +186,7 @@
             return false;
         });
 
-        $('#rejectPaperModal.save').click(function (e) {
+        $('#rejectPaperModal .save').click(function (e) {
             waitingDialog.show('Loading...', {
                 dialogSize: 'sm',
                 progressType: 'info'
@@ -213,7 +213,7 @@
             return false;
         });
 
-        $('#setUnderReviewModal.save').click(function (e) {
+        $('#setUnderReviewModal .save').click(function (e) {
             waitingDialog.show('Loading...', {
                 dialogSize: 'sm',
                 progressType: 'info'
