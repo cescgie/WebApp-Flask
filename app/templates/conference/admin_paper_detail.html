@@ -2,7 +2,7 @@
 
 {% block content %}
     <p><a href="{{ url_for('main.home_page') }}">Home</a> / 
-        <a href="{{ url_for('main.admin_page') }}">Conference Chair</a> /
+        {%trans%}Conference Chair{%endtrans%} /
         <a href="{{ url_for('main.admin_list_of_papers') }}">List of Papers</a> /
         <span>{{ paper.title }}</span>                
     </p>
@@ -121,13 +121,13 @@
 {% block script %}
 <script type=text/javascript>
     $(function() {
-        $('#assignReviewerModal .save').click(function (e) {
+        $('#assignReviewerModal.save').click(function (e) {
             e.preventDefault();
             waitingDialog.show('Loading...', {
                 dialogSize: 'sm',
                 progressType: 'info'
             });
-            var data = $("#assign-reviewers :input").serializeArray(),dataObj = {};
+            var data = $("#assign-reviewers:input").serializeArray(),dataObj = {};
 
             var author_arr = [];
             $(data).each(function(i, field){
@@ -157,9 +157,9 @@
             });
 
             return false;
-        })
+        });
 
-        $('#acceptPaperModal .save').click(function (e) {
+        $('#acceptPaperModal.save').click(function (e) {
             waitingDialog.show('Loading...', {
                 dialogSize: 'sm',
                 progressType: 'info'
@@ -175,8 +175,7 @@
                 if(data.status === 200){
                     $('#paper_status').text(data.actionStr);
                     $('.setPaperAction').hide();
-                    $('.setUnderReview').show();                
-                    $('.setUnderReview').removeClass('hidden');  
+                    $('.setUnderReview').show().removeClass('hidden');
                     $.notify(data.message, "success");                    
                 }else{
                     $.notify(data.message, "error");                
@@ -185,9 +184,9 @@
                 waitingDialog.hide();
             });
             return false;
-        })
+        });
 
-        $('#rejectPaperModal .save').click(function (e) {
+        $('#rejectPaperModal.save').click(function (e) {
             waitingDialog.show('Loading...', {
                 dialogSize: 'sm',
                 progressType: 'info'
@@ -203,8 +202,7 @@
                 if(data.status === 200){
                     $('#paper_status').text(data.actionStr);
                     $('.setPaperAction').hide();
-                    $('.setUnderReview').show();                
-                    $('.setUnderReview').removeClass('hidden');
+                    $('.setUnderReview').show().removeClass('hidden');
                     $.notify(data.message, "success");                    
                 }else{
                     $.notify(data.message, "error");
@@ -213,9 +211,9 @@
                 waitingDialog.hide();
             });
             return false;
-        })
+        });
 
-        $('#setUnderReviewModal .save').click(function (e) {
+        $('#setUnderReviewModal.save').click(function (e) {
             waitingDialog.show('Loading...', {
                 dialogSize: 'sm',
                 progressType: 'info'
@@ -231,8 +229,7 @@
                 if(data.status === 200){                    
                     $('#paper_status').text(data.actionStr);
                     $('.setUnderReview').hide();
-                    $('.setPaperAction').show();                
-                    $('.setPaperAction').removeClass('hidden');
+                    $('.setPaperAction').show().removeClass('hidden');
                     $.notify(data.message, "success");                    
                 }else{
                     $.notify(data.message, "error");
@@ -241,12 +238,12 @@
                 waitingDialog.hide();
             });
             return false;
-        })
+        });
 
         // Initialize the plugin:
         // https://github.com/davidstutz/bootstrap-multiselect
         $('#select-reviewer').multiselect({
-            enableFiltering: true,   
+            enableFiltering: true
         })
     });
 </script>

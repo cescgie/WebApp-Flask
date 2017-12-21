@@ -2,7 +2,7 @@
 
 {% block content %}
     <p><a href="{{ url_for('main.home_page') }}">Home</a> / 
-        <a href={{ url_for('main.admin_page') }}>{%trans%}Conference Chair{%endtrans%}</a> /
+        {%trans%}Conference Chair{%endtrans%} /
         <span>List of Papers</span>      
     </p>
     <h1>List of papers</h1>
@@ -28,16 +28,7 @@
                     <td>{{ paper_status[paper.status] }}</td>
                     <td>{{ paper_score[loop.index0] }}</td>                    
                     <td>
-                        <a href="/conference/paper/detail/{{ paper.id }}" class="btn btn-primary" type="button">Show details</a>                                   
-                        {# <div class="dropdown">
-                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Actions
-                            <span class="caret"></span></button>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Assign Reviewer</a></li>
-                                <li><a href="#">Accept Paper</a></li>
-                                <li><a href="#">Reject Paper</a></li>
-                            </ul>
-                        </div> #}
+                        <a href="/conference/paper/detail/{{ paper.id }}" class="btn btn-primary" type="button">Show details</a>
                     </td>                                        
                 </tr>
                 {% endfor %}

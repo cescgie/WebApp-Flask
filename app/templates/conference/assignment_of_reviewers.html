@@ -1,6 +1,6 @@
 {% extends "common/page_base.html" %} {% block content %}
 <p><a href="{{ url_for('main.home_page') }}">Home</a> / 
-    <a href={{ url_for( 'main.admin_page') }}>{%trans%}Conference Chair{%endtrans%}</a> /
+    {%trans%}Conference Chair{%endtrans%} /
     <span>Assignment Of Reviewers</span>            
 </p>
 <h1>Assignment Of Reviewers</h1>
@@ -76,7 +76,7 @@
             var id = $(e.currentTarget).data('cust-id');
             var lastValue = $(e.currentTarget).data('cust-value');
             var action = false;
-            if (lastValue != 'True') {
+            if (lastValue !== 'True') {
                 action = true;
             }
 
@@ -110,7 +110,7 @@
             }, function(data) {
                 if(data.status === 200){
                     var role = '';
-                    if (data.action == 1) {
+                    if (data.action === 1) {
                         role = 'Reviewer';
                     } else {
                         role = 'Member';

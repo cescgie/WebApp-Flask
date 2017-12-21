@@ -31,13 +31,6 @@ def member_page():
     return render_template('pages/user_page.html')
 
 
-# The Admin page is accessible to users with the 'admin' role
-@main_blueprint.route('/admin')
-@roles_accepted('admin')  # Limits access to users with the 'admin' role
-def admin_page():
-    return render_template('pages/admin_page.html')
-
-
 @main_blueprint.route('/pages/profile', methods=['GET', 'POST'])
 @login_required
 def user_profile_page():
@@ -127,6 +120,7 @@ def admin_list_of_papers():
 def overview_scores():
     return render_template('conference/overview_scores.html')
 
+
 @main_blueprint.route('/conference/paper/detail/<paper_id>')
 @roles_accepted('admin')
 def conf_paper_detail(paper_id):
@@ -181,6 +175,7 @@ def conf_paper_detail(paper_id):
         reviewer_names=reviewer_names,
         paper_status=paper_status,
         users=users)
+
 
 # Paper action by conference chair
 @main_blueprint.route('/conference/assign/reviewer')
@@ -254,6 +249,7 @@ def conf_action_paper():
 
     return jsonify({'status':status, 'message':message, 'paper_id': paper_id, 'actionStr':actionStr, 'action':action})
 
+
 # ACCEPT: admin, reviewer
 @main_blueprint.route('/review/paper')
 @roles_accepted('reviewer')  # Limits access to reviewer
@@ -292,6 +288,7 @@ def review_paper():
             paper_scores=paper_scores,
             paper_status=paper_status)
 
+
 # Paper submit
 @main_blueprint.route('/review/paper/star')
 @roles_accepted('reviewer')  # Limits access to reviewer
@@ -322,6 +319,7 @@ def review_paper_star():
 
     return jsonify({'paper_id': paper_id, 'value':value, 'status':status, 'message':message})
 
+
 @main_blueprint.route('/member/submit-paper')
 @login_required # Limits access to authenticated users
 def paper_submission():
@@ -335,6 +333,7 @@ def paper_submission():
         # form = PaperSubmissionForm(request.form)
         # return render_template('member/paper_submission.html', form=form)
     return render_template('member/paper_submission.html', users=users)
+
 
 # Paper submit
 @main_blueprint.route('/submit/paper')
@@ -357,6 +356,7 @@ def submit_paper():
     db.session.commit()
 
     return jsonify({'data': data})
+
 
 @main_blueprint.route('/member/list-papers')
 @login_required # Limits access to authenticated users
@@ -385,6 +385,7 @@ def list_of_papers():
             papers=papers, 
             paper_status=paper_status,
             paper_authors=paper_authors)
+
 
 @main_blueprint.route('/paper/detail/<paper_id>')
 @login_required # Limits access to authenticated users
@@ -441,6 +442,7 @@ def member_paper_detail(paper_id):
         paper_status=paper_status,
         users=users)
 
+
 # User activation
 @main_blueprint.route('/activate/user')
 @roles_accepted('admin')
@@ -482,10 +484,12 @@ def assign_user_admin():
 
     return jsonify({'status':status, 'message':message, 'id':id, 'action':action})
 
+
 def create_paper(authors, title, abstract, submmitedBy):
     paper = Paper(authors=authors, title=title, abstract=abstract, submittedBy=submmitedBy, status=0)
     db.session.add(paper)
     return paper
+
 
 def find_or_create_role(name, label):
     """ Find existing role or create new role """
@@ -503,6 +507,7 @@ def find_or_update_user(id, role=None):
         user.roles.append(role)
         db.session.commit()
     return user
+
 
 def assign_reviewers_func(paper_id,reviewer_id,score=None):
     paper_reviewer = PaperReviewers(

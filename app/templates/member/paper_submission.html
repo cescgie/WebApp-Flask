@@ -48,11 +48,11 @@
                 progressType: 'info'
             });
             e.preventDefault();
-            var data = $("#paper-submission :input").serializeArray(),dataObj = {};
+            var data = $("#paper-submission:input").serializeArray(),dataObj = {};
 
             var author_arr = [];
             $(data).each(function(i, field){
-                if(field.name == 'select-author'){
+                if(field.name === 'select-author'){
                     author_arr.push(Number(field.value))
                 }else{
                     dataObj[field.name] = field.value;                    

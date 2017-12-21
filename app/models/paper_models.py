@@ -13,6 +13,7 @@ class Paper(db.Model):
     status = db.Column(db.Integer(), server_default='0' ) #0=Submitted, 1=Under Review, 2=Accepted, 3=Rejected
     submittedBy = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
 
+
 # Define the Paper Reviewers association model
 class PaperReviewers(db.Model):
     __tablename__ = 'paper_reviewers'

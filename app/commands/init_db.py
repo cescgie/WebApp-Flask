@@ -1,12 +1,6 @@
-# This file defines command line commands for manage.py
-#
-# Copyright 2014 SolidBuilds.com. All rights reserved
-#
-# Authors: Ling Thio <ling.thio@gmail.com>
-
 import datetime
 
-from flask import current_app, json
+from flask import current_app
 from flask_script import Command
 
 from app import db
@@ -16,11 +10,13 @@ from app.models.user_models import User, Role
 
 from phpserialize import serialize
 
+
 class InitDbCommand(Command):
     """ Initialize the database."""
 
     def run(self):
         init_db()
+
 
 def init_db():
     """ Initialize the database."""
@@ -29,6 +25,7 @@ def init_db():
     create_users()
     create_papers()
     assign_reviewers()
+
 
 def create_users():
     """ Create users """
@@ -77,12 +74,14 @@ def find_or_create_user(first_name, last_name, email, password, role=None):
         db.session.add(user)
     return user
 
+
 def create_papers():
     create_papers_func(serialize([5]),'Title 5', 'Abstract 5', 5, 1)
     create_papers_func(serialize([4,6]),'Title 6', 'Abstract 6', 6, 1)
     create_papers_func(serialize([7]),'Title 7', 'Abstract 7', 7, 1)
 
     db.session.commit()
+
 
 def create_papers_func(authors,title,abstract,submittedBy,status=0,mediaRef=None,mediaTyp=None):
     paper = Paper(authors=authors,
@@ -103,6 +102,7 @@ def assign_reviewers():
     assign_reviewers_func(3,4,-1)
 
     db.session.commit()
+
 
 def assign_reviewers_func(paper_id,reviewer_id,score=None):
     paper_reviewer = PaperReviewers(
