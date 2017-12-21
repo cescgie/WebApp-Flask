@@ -2,22 +2,30 @@
 Flask application for Peer Review System based on [Flask-User starter app](https://github.com/lingthio/Flask-User-starter-app.git)
 
 ## Starter
-- If there is no virtualenv yet , create one
+- If there is no virtualenv yet , create one<br>
     `virtualenv env`
-- Activate virtualenv
+- Activate virtualenv<br>
     `source env/bin/activate`
-- Install requirements
+- Install requirements<br>
     `pip install -r requirements.txt`
-- Create DB tables and populate the roles and users tables
+- Create DB tables and populate the roles and users tables<br>
     `python manage.py init_db`
-- Run with debug
+- Run with debug<br>
     `python manage.py runserver`
 
 ## Development
-- Activate virtualenv
+- Activate virtualenv<br>
     `source env/bin/activate`
-- Run with debug
+- Run with debug<br>
     `python manage.py runserver`
+
+## Test User Credentials
+- Admin or Conference chair<br>
+    `admin@example.com:Password1`
+- Reviewer<br>
+    `reviewer1@example.com:Password1`
+- Normal User<br>
+    `member1@example.com:Password1`
 
 ## TASKS
 1. There should be a registration page. The user is identified by their email address, and
