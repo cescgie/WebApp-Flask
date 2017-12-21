@@ -19,7 +19,7 @@
                 <tbody>
                     {% for paper in papers %}
                     <tr>
-                        <td><a href="#">{{ paper.title }}</a></td>                
+                        <td><a href="/paper/detail/{{ paper.id }}">{{ paper.title }}</a></td>                
                         <td>{{ paper_authors[loop.index0] }}</td>
                         <td>{{ paper_status[paper.status] }}</td>
                         <td>
