@@ -48,7 +48,7 @@
                 progressType: 'info'
             });
             e.preventDefault();
-            var data = $("#paper-submission:input").serializeArray(),dataObj = {};
+            var data = $("#paper-submission :input").serializeArray(),dataObj = {};
 
             var author_arr = [];
             $(data).each(function(i, field){
